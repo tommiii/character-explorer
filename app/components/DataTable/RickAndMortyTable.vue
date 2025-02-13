@@ -8,37 +8,31 @@ const columns = [
   {
     key: 'name',
     label: 'Character',
-    sortable: true,
     class: 'w-[180px]',
   },
   {
     key: 'status',
     label: 'Status',
-    sortable: true,
     class: 'w-[100px]',
   },
   {
     key: 'species',
     label: 'Species',
-    sortable: true,
     class: 'w-[120px]',
   },
   {
     key: 'gender',
     label: 'Gender',
-    sortable: true,
     class: 'w-[100px]',
   },
   {
     key: 'origin',
     label: 'Origin',
-    sortable: true,
     class: 'min-w-[160px]',
   },
   {
     key: 'actions',
     label: 'Actions',
-    sortable: false,
     class: 'w-[100px] text-center',
   },
 ]
@@ -53,22 +47,47 @@ const rows = computed(() => {
 
 <template>
   <div class="space-y-4">
-    <DataTableBaseTable
-      :columns="columns"
-      :rows="rows"
-      :loading="loading"
-    >
-      <template #actions-data="{ row }">
-        <NuxtLink :to="`/rick-and-morty/${row.id}`">
-          <UButton
-            size="sm"
-            color="primary"
-            variant="soft"
-          >
-            Details
-          </UButton>
-        </NuxtLink>
-      </template>
-    </DataTableBaseTable>
+    <div class="w-full">
+      <div class="max-w-full overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
+        <UTable
+          :rows="rows"
+          :columns="columns"
+          :loading="loading"
+          hover
+          class="w-full"
+        >
+          <template #loading>
+            <div class="flex items-center justify-center p-4">
+              <UIcon name="i-heroicons-arrow-path" class="animate-spin h-6 w-6" />
+            </div>
+          </template>
+
+          <template #empty-state>
+            <div class="flex flex-col items-center justify-center p-4 text-gray-500">
+              <UIcon name="i-heroicons-inbox" class="h-8 w-8 mb-2" />
+              <p>No data available</p>
+            </div>
+          </template>
+
+          <template #header-cell="{ column }">
+            <div class="flex items-center gap-2" :class="[column.class]">
+              {{ column.label }}
+            </div>
+          </template>
+
+          <template #actions-data="{ row }">
+            <NuxtLink :to="`/rick-and-morty/${row.id}`">
+              <UButton
+                size="sm"
+                color="primary"
+                variant="soft"
+              >
+                Details
+              </UButton>
+            </NuxtLink>
+          </template>
+        </UTable>
+      </div>
+    </div>
   </div>
 </template>
