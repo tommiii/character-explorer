@@ -4,8 +4,6 @@ const id = route.params.id as string
 
 const { data: character, pending } = await useRickAndMortyData(`/character/${id}`)
 
-console.log({ data })
-
 useHead({
   title: character.value?.name ? `${character.value.name} - Rick and Morty` : 'Character Details',
 })
