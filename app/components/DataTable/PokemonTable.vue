@@ -12,6 +12,12 @@ const columns = [
     sortable: true,
     class: 'min-w-[200px]',
   },
+  {
+    key: 'actions',
+    label: 'Actions',
+    sortable: false,
+    class: 'w-[100px] text-center',
+  },
 ]
 
 const props = defineProps<{
@@ -34,6 +40,16 @@ const rows = computed(() => {
       :columns="columns"
       :rows="rows"
       :loading="loading"
-    />
+    >
+      <template #actions-data="{ row }">
+        <UButton
+          size="sm"
+          color="primary"
+          variant="soft"
+        >
+          Details
+        </UButton>
+      </template>
+    </DataTableBaseTable>
   </div>
 </template> 

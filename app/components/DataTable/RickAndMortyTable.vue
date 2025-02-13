@@ -34,7 +34,7 @@ const columns = [
     key: 'actions',
     label: 'Actions',
     sortable: false,
-    class: 'w-[100px] text-right',
+    class: 'w-[100px] text-center',
   },
 ]
 
@@ -59,6 +59,16 @@ console.log({rows: rows.value})
       :columns="columns"
       :rows="rows"
       :loading="loading"
-    />   
+    >
+      <template #actions-data="{ row }">
+        <UButton
+          size="sm"
+          color="primary"
+          variant="soft"
+        >
+          Details
+        </UButton>
+      </template>
+    </DataTableBaseTable>
   </div>
 </template> 

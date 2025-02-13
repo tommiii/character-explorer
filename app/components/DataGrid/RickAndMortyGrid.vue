@@ -36,6 +36,15 @@ const props = defineProps<{
           <p class="text-sm text-gray-600 dark:text-gray-400 truncate">
             From: {{ character.origin.name }}
           </p>
+          <div class="pt-2 text-center">
+            <UButton
+              size="sm"
+              color="primary"
+              variant="soft"
+            >
+              Details
+            </UButton>
+          </div>
         </div>
       </div>
     </template>

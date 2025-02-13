@@ -82,9 +82,9 @@ const sortedRows = computed(() => {
           </div>
         </template>
 
-        <template #cell="{ column, row }">
+        <template v-for="column in columns" :key="column.key" #[`${column.key}-data`]="{ row }">
           <div :class="column.class">
-            <slot :name="`cell-${column.key}`" :row="row" :column="column">
+            <slot :name="`${column.key}-data`" :row="row" :column="column">
               {{ row[column.key] }}
             </slot>
           </div>

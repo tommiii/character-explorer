@@ -33,6 +33,15 @@ const getPokemonImage = (url: string) => {
           >
             #{{ String(index + 1).padStart(3, '0') }}
           </UBadge>
+          <div class="pt-2">
+            <UButton
+              size="sm"
+              color="primary"
+              variant="soft"
+            >
+              Details
+            </UButton>
+          </div>
         </div>
       </div>
     </template>
