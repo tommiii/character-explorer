@@ -1,4 +1,9 @@
 <script setup lang="ts">
+const props = defineProps<{
+  pokemon: any[]
+  loading?: boolean
+}>()
+
 const columns = [
   {
     key: 'id',
@@ -20,11 +25,6 @@ const columns = [
   },
 ]
 
-const props = defineProps<{
-  pokemon: any[]
-  loading?: boolean
-}>()
-
 const rows = computed(() => {
   return props.pokemon?.map((pokemon, index) => ({
     id: index + 1,
@@ -42,14 +42,16 @@ const rows = computed(() => {
       :loading="loading"
     >
       <template #actions-data="{ row }">
-        <UButton
-          size="sm"
-          color="primary"
-          variant="soft"
-        >
-          Details
-        </UButton>
+        <NuxtLink :to="`/pokemon/${row.id}`">
+          <UButton
+            size="sm"
+            color="primary"
+            variant="soft"
+          >
+            Details
+          </UButton>
+        </NuxtLink>
       </template>
     </DataTableBaseTable>
   </div>
-</template> 
+</template>

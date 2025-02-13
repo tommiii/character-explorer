@@ -1,4 +1,9 @@
 <script setup lang="ts">
+const props = defineProps<{
+  characters: any[]
+  loading?: boolean
+}>()
+
 const columns = [
   {
     key: 'name',
@@ -38,19 +43,12 @@ const columns = [
   },
 ]
 
-const props = defineProps<{
-  characters: any[]
-  loading?: boolean
-}>()
-
 const rows = computed(() => {
   return props.characters?.map(character => ({
     ...character,
     origin: character.origin.name,
   })) || []
 })
-
-console.log({rows: rows.value})
 </script>
 
 <template>
@@ -61,14 +59,16 @@ console.log({rows: rows.value})
       :loading="loading"
     >
       <template #actions-data="{ row }">
-        <UButton
-          size="sm"
-          color="primary"
-          variant="soft"
-        >
-          Details
-        </UButton>
+        <NuxtLink :to="`/rick-and-morty/${row.id}`">
+          <UButton
+            size="sm"
+            color="primary"
+            variant="soft"
+          >
+            Details
+          </UButton>
+        </NuxtLink>
       </template>
     </DataTableBaseTable>
   </div>
-</template> 
+</template>

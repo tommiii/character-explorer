@@ -1,8 +1,15 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+
 const props = defineProps<{
   characters: any[]
   loading?: boolean
 }>()
+
+const router = useRouter()
+const handleDetails = async (character: any) => {
+  await router.push(`/rick-and-morty/${character.id}`)
+}
 </script>
 
 <template>
@@ -41,6 +48,7 @@ const props = defineProps<{
               size="sm"
               color="primary"
               variant="soft"
+              @click="handleDetails(character)"
             >
               Details
             </UButton>

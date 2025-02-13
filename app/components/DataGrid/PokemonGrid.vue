@@ -1,12 +1,23 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+
 const props = defineProps<{
   pokemon: any[]
   loading?: boolean
 }>()
 
+const router = useRouter()
+
 const getPokemonImage = (url: string) => {
   const id = url.split('/').filter(Boolean).pop()
   return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
+}
+
+
+
+const handleDetails = async (poke: any) => {
+  const id = poke.url.split('/').filter(Boolean).pop()
+  await router.push(`/pokemon/${id}`)
 }
 </script>
 
@@ -38,6 +49,7 @@ const getPokemonImage = (url: string) => {
               size="sm"
               color="primary"
               variant="soft"
+              @click="handleDetails(poke)"
             >
               Details
             </UButton>
