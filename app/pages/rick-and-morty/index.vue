@@ -5,12 +5,11 @@ import RickAndMortyTable from '~/components/RickAndMortyTable.vue'
 import { VIEW_TYPES, type ViewType } from '~/constants/views'
 
 const currentPage = ref(1)
-const pageSize = ref(20)
 const view = ref<ViewType>(VIEW_TYPES.TABLE)
 
 const { data, refetch } = useQuery({
-  queryKey: ['rick-and-morty-data', currentPage, pageSize],
-  queryFn: () => fetch(`https://rickandmortyapi.com/api/character?page=${currentPage.value}&per_page=${pageSize.value}`).then(res => res.json()),
+  queryKey: ['rick-and-morty-data', currentPage],
+  queryFn: () => fetch(`https://rickandmortyapi.com/api/character?page=${currentPage.value}`).then(res => res.json()),
 })
 
 function handlePageChange(page: number) {
@@ -18,15 +17,13 @@ function handlePageChange(page: number) {
   refetch()
 }
 
-watch([currentPage, pageSize], () => {
+watch([currentPage], () => {
   refreshNuxtData()
 })
 
 definePageMeta({
   title: 'Rick and Morty Characters',
 })
-
-// console.log({ currentPage, totalCount: data?.value?.info?.count, pages: data?.value?.info?.pages })
 </script>
 
 <template>
@@ -64,12 +61,12 @@ definePageMeta({
           <RickAndMortyTable
             v-if="view === VIEW_TYPES.TABLE"
             :characters="data?.results || []"
+            :loading="!data"
             :pagination-info="{
               currentPage,
-              totalCount: data?.info?.count,
-              pages: data?.info?.pages,
+              totalCount: data?.info?.count || 0,
+              pages: data?.info?.pages || 0,
             }"
-            :loading="!data"
             @page-change="handlePageChange"
           />
           <RickAndMortyGrid
@@ -78,8 +75,8 @@ definePageMeta({
             :loading="!data"
             :pagination-info="{
               currentPage,
-              totalCount: data?.info?.count,
-              pages: data?.info?.pages,
+              totalCount: data?.info?.count || 0,
+              pages: data?.info?.pages || 0,
             }"
             @page-change="handlePageChange"
           />
