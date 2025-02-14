@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { PokemonListItem } from '~/types/pokemon'
 import { useQuery } from '@tanstack/vue-query'
 import PokemonGrid from '~/components/PokemonGrid.vue'
 import PokemonTable from '~/components/PokemonTable.vue'
@@ -14,7 +15,7 @@ const { data, refetch } = useQuery({
 })
 
 const pokemonWithImages = computed(() => {
-  return data.value?.results.map((pokemon) => {
+  return data.value?.results.map((pokemon: PokemonListItem) => {
     const id = pokemon.url.split('/').filter(Boolean).pop()
     return {
       ...pokemon,
