@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useQuery } from '@tanstack/vue-query'
+
 interface Episode {
   id: string
   name: string
@@ -28,9 +30,15 @@ interface Character {
 }
 
 const route = useRoute()
-const id = String(route.params.id)
+const id = computed(() => {
+  const paramId = route.params.id
+  return typeof paramId === 'string' ? paramId : Array.isArray(paramId) ? paramId[0] : ''
+})
 
-const { data: character, pending, error } = await useRickAndMortyData<Character>(`/character/${id}`)
+const { data: character, isLoading: pending } = useQuery<Character>({
+  queryKey: ['character-details', id],
+  queryFn: () => fetch(`https://rickandmortyapi.com/api/character/${id.value}`).then(res => res.json()),
+})
 
 // Fetch episode details for each episode URL
 const episodes = ref<Episode[]>([])
@@ -59,14 +67,18 @@ if (character.value) {
   episodes.value = episodeData.filter((episode): episode is Episode => episode !== null)
 }
 
+const statusColors = {
+  Alive: 'green',
+  Dead: 'red',
+  unknown: 'gray',
+} as const
+
 useHead({
   title: character.value?.name ? `${character.value.name} - Rick and Morty` : 'Character Details',
   meta: [
     {
       name: 'description',
-      content: character.value
-        ? `Learn more about ${character.value.name} from Rick and Morty. Species: ${character.value.species}, Status: ${character.value.status}`
-        : 'Character details from Rick and Morty',
+      content: character.value ? `Details about ${character.value.name} from Rick and Morty` : 'Character details page',
     },
   ],
 })
@@ -82,23 +94,7 @@ function formatDate(dateString: string) {
 
 <template>
   <div class="container mx-auto p-4">
-    <template v-if="error">
-      <div class="max-w-3xl mx-auto text-center space-y-4">
-        <h1 class="text-2xl font-bold text-red-600">
-          Error loading character
-        </h1>
-        <p class="text-gray-600">
-          {{ error.message }}
-        </p>
-        <NuxtLink to="/rick-and-morty">
-          <UButton icon="i-heroicons-arrow-left">
-            Back to list
-          </UButton>
-        </NuxtLink>
-      </div>
-    </template>
-
-    <template v-else-if="pending">
+    <template v-if="pending">
       <div class="flex justify-center items-center min-h-[400px]">
         <UIcon name="i-heroicons-arrow-path" class="animate-spin h-8 w-8" />
       </div>
@@ -118,117 +114,84 @@ function formatDate(dateString: string) {
         </div>
 
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-          <div class="md:flex">
-            <div class="md:w-1/3">
-              <img
-                :src="character.image"
-                :alt="character.name"
-                class="w-full h-full object-cover"
-              >
+          <!-- Header Section -->
+          <div class="relative bg-gray-100 dark:bg-gray-700/50 p-8">
+            <div class="absolute top-4 right-4">
+              <span class="text-2xl font-bold text-gray-400">
+                #{{ character.id }}
+              </span>
             </div>
-            <div class="p-6 md:w-2/3 space-y-6">
-              <div class="space-y-4">
-                <h1 class="text-3xl font-bold">
-                  {{ character.name }}
-                </h1>
-                <div class="flex flex-wrap gap-2">
+            <div class="flex flex-col md:flex-row gap-8 items-center">
+              <div class="relative">
+                <img
+                  :src="character.image"
+                  :alt="character.name"
+                  class="w-64 h-64 object-cover rounded-lg"
+                >
+              </div>
+              <div class="space-y-4 text-center md:text-left flex-1">
+                <div>
+                  <h1 class="text-3xl font-bold">
+                    {{ character.name }}
+                  </h1>
+                </div>
+                <div class="flex flex-wrap gap-2 justify-center md:justify-start">
                   <UBadge
-                    :color="character.status === 'Alive' ? 'green' : character.status === 'Dead' ? 'red' : 'gray'"
-                    class="font-medium"
+                    :color="statusColors[character.status as keyof typeof statusColors]"
+                    class="capitalize"
                   >
                     {{ character.status }}
                   </UBadge>
-                  <UBadge color="primary">
+                  <UBadge color="blue" class="capitalize">
                     {{ character.species }}
                   </UBadge>
-                  <UBadge color="gray">
+                  <UBadge color="purple" class="capitalize">
                     {{ character.gender }}
                   </UBadge>
-                  <UBadge v-if="character.type" color="yellow">
-                    {{ character.type }}
-                  </UBadge>
                 </div>
-              </div>
-
-              <div class="grid md:grid-cols-2 gap-6">
-                <div class="space-y-2">
-                  <h2 class="font-medium text-gray-500 dark:text-gray-400">
-                    Origin
-                  </h2>
-                  <p class="text-lg">
-                    {{ character.origin.name }}
-                  </p>
-                </div>
-                <div class="space-y-2">
-                  <h2 class="font-medium text-gray-500 dark:text-gray-400">
-                    Last known location
-                  </h2>
-                  <p class="text-lg">
-                    {{ character.location.name }}
-                  </p>
-                </div>
-              </div>
-
-              <div class="space-y-2">
-                <h2 class="font-medium text-gray-500 dark:text-gray-400">
-                  First appearance
-                </h2>
-                <p>
-                  {{ formatDate(character.created) }}
-                </p>
               </div>
             </div>
           </div>
 
-          <div class="border-t border-gray-200 dark:border-gray-700 p-6">
-            <div class="space-y-4">
-              <div class="w-full">
-                <UButton
-                  color="gray"
-                  variant="ghost"
-                  class="flex w-full items-center justify-between gap-2"
-                  @click="() => isOpen = !isOpen"
-                >
-                  <div class="flex items-center gap-2">
-                    <UIcon name="i-heroicons-tv" />
-                    <span>Episode Appearances ({{ episodes.length }})</span>
+          <!-- Details Section -->
+          <div class="p-6 space-y-8">
+            <div>
+              <h2 class="text-xl font-semibold mb-4">
+                Character Information
+              </h2>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                  <div class="text-sm text-gray-600 dark:text-gray-400">
+                    Origin
                   </div>
-                  <UIcon
-                    :name="isOpen ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'"
-                    class="transition-transform"
-                  />
-                </UButton>
-
-                <Transition
-                  enter-active-class="transition duration-100 ease-out"
-                  enter-from-class="transform scale-95 opacity-0"
-                  enter-to-class="transform scale-100 opacity-100"
-                  leave-active-class="transition duration-75 ease-out"
-                  leave-from-class="transform scale-100 opacity-100"
-                  leave-to-class="transform scale-95 opacity-0"
-                >
-                  <div v-show="isOpen" class="grid gap-4 sm:grid-cols-2 pt-4">
-                    <UCard
-                      v-for="episode in episodes"
-                      :key="episode.episode"
-                      class="hover:shadow-md transition-shadow"
-                    >
-                      <template #header>
-                        <h3 class="font-medium">
-                          {{ episode.name }}
-                        </h3>
-                      </template>
-                      <div class="space-y-2">
-                        <p class="text-sm text-gray-600 dark:text-gray-400">
-                          Episode: {{ episode.episode }}
-                        </p>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">
-                          Air Date: {{ episode.air_date }}
-                        </p>
-                      </div>
-                    </UCard>
+                  <div class="font-medium">
+                    {{ character.origin.name }}
                   </div>
-                </Transition>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                  <div class="text-sm text-gray-600 dark:text-gray-400">
+                    Last Known Location
+                  </div>
+                  <div class="font-medium">
+                    {{ character.location.name }}
+                  </div>
+                </div>
+                <div v-if="character.type" class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                  <div class="text-sm text-gray-600 dark:text-gray-400">
+                    Type
+                  </div>
+                  <div class="font-medium">
+                    {{ character.type }}
+                  </div>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                  <div class="text-sm text-gray-600 dark:text-gray-400">
+                    Number of Episodes
+                  </div>
+                  <div class="font-medium">
+                    {{ character.episode.length }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useQuery } from '@tanstack/vue-query'
+
 interface PokemonAbility {
   ability: {
     name: string
@@ -68,60 +70,51 @@ interface PokemonSpecies {
   }>
 }
 
-type BadgeColor = 'gray' | 'red' | 'blue' | 'yellow' | 'green' | 'sky' | 'orange' | 'purple' | 'amber' | 'indigo' | 'pink' | 'lime' | 'violet' | 'rose' | 'slate' | 'zinc'
-
 const route = useRoute()
-const id = String(route.params.id)
+const id = computed(() => {
+  const paramId = route.params.id
+  return typeof paramId === 'string' ? paramId : Array.isArray(paramId) ? paramId[0] : ''
+})
 
-const { data: pokemon, pending, error } = await usePokemonData<Pokemon>(`/pokemon/${id}`)
+const { data: pokemon, isLoading: pending, error: pokemonError } = useQuery<Pokemon>({
+  queryKey: ['pokemon-details', id],
+  queryFn: () => fetch(`https://pokeapi.co/api/v2/pokemon/${id.value}`).then(res => res.json()),
+})
 
-// Fetch species data for description
-const species = ref<PokemonSpecies | null>(null)
-if (pokemon.value?.species) {
-  const { data } = await usePokemonData<PokemonSpecies>(
-    pokemon.value.species.url.replace('https://pokeapi.co/api/v2', ''),
-  )
-  species.value = data.value
-}
+const { data: species, error: speciesError } = useQuery<PokemonSpecies>({
+  queryKey: ['pokemon-species', id],
+  queryFn: () => fetch(`https://pokeapi.co/api/v2/pokemon-species/${id.value}`).then(res => res.json()),
+  enabled: !!pokemon.value,
+})
 
 const description = computed(() => {
-  if (!species.value)
-    return ''
-  const englishEntry = species.value.flavor_text_entries.find(
-    entry => entry.language.name === 'en',
-  )
-  return englishEntry?.flavor_text.replace(/\f/g, ' ') || ''
+  return species.value?.flavor_text_entries.find((entry: { language: { name: string } }) => entry.language.name === 'en')?.flavor_text.replace(/\f/g, ' ') || ''
 })
 
 const genus = computed(() => {
-  if (!species.value)
-    return ''
-  const englishGenus = species.value.genera.find(
-    entry => entry.language.name === 'en',
-  )
-  return englishGenus?.genus || ''
+  return species.value?.genera.find((entry: { language: { name: string } }) => entry.language.name === 'en')?.genus || ''
 })
 
-const typeColors: Record<string, string> = {
+const typeColors = {
   normal: 'gray',
   fire: 'red',
   water: 'blue',
   electric: 'yellow',
   grass: 'green',
-  ice: 'blue',
+  ice: 'sky',
   fighting: 'orange',
   poison: 'purple',
-  ground: 'yellow',
-  flying: 'blue',
+  ground: 'amber',
+  flying: 'indigo',
   psychic: 'pink',
-  bug: 'green',
-  rock: 'gray',
-  ghost: 'purple',
-  dragon: 'red',
+  bug: 'lime',
+  rock: 'amber',
+  ghost: 'violet',
+  dragon: 'rose',
   dark: 'gray',
   steel: 'gray',
   fairy: 'pink',
-}
+} as const
 
 useHead({
   title: pokemon.value?.name

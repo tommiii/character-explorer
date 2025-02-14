@@ -22,7 +22,7 @@ const columns = [
   {
     key: 'image',
     label: '',
-    class: 'w-[80px]',
+    class: 'w-[100px]',
   },
   {
     key: 'name',
@@ -37,15 +37,12 @@ const columns = [
 ]
 
 const rows = computed(() => {
-  return props.pokemon?.map((pokemon) => {
-    const id = pokemon.url.split('/').filter(Boolean).pop()
-    return {
-      id,
-      image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`,
-      name: pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1),
-      url: pokemon.url,
-    }
-  }) || []
+  return props.pokemon?.map(pokemon => ({
+    id: pokemon.id,
+    image: pokemon.image,
+    name: pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1),
+    url: pokemon.url,
+  })) || []
 })
 </script>
 
@@ -83,7 +80,7 @@ const rows = computed(() => {
             <img
               :src="row.image"
               :alt="row.name"
-              class="w-16 h-16 object-contain"
+              class="w-20 h-20 object-contain"
             >
           </template>
 

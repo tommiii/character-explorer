@@ -13,6 +13,17 @@ const { data, refetch } = useQuery({
   queryFn: () => fetch(`https://pokeapi.co/api/v2/pokemon?limit=${pageSize.value}&offset=${(currentPage.value - 1) * pageSize.value}`).then(res => res.json()),
 })
 
+const pokemonWithImages = computed(() => {
+  return data.value?.results.map((pokemon) => {
+    const id = pokemon.url.split('/').filter(Boolean).pop()
+    return {
+      ...pokemon,
+      id,
+      image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+    }
+  }) || []
+})
+
 function handlePageChange(page: number) {
   currentPage.value = page
   refetch()
@@ -75,12 +86,11 @@ definePageMeta({
         >
           <PokemonTable
             v-if="view === VIEW_TYPES.TABLE"
-            :pokemon="data?.results || []"
+            :pokemon="pokemonWithImages"
             :loading="!data"
             :pagination-info="{
               currentPage,
               totalCount: data?.count || 0,
-              // pages: data?.count ? Math.ceil(data.count / pageSize) : 0,
               pageSize,
             }"
             @page-change="handlePageChange"
@@ -88,7 +98,7 @@ definePageMeta({
           />
           <PokemonGrid
             v-else
-            :pokemons="data?.results || []"
+            :pokemons="pokemonWithImages"
             :loading="!data"
             :pagination-info="paginationInfo"
             @page-change="handlePageChange"
