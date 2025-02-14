@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PaginationInfo } from '~/types/pagination'
-import RickAndMortyPaginationWrapper from '../Pagination/RickAndMortyPaginationWrapper.vue'
+import RickAndMortyPagination from './RickAndMortyPagination.vue'
 
 const props = defineProps<{
   characters: any[]
@@ -10,7 +10,6 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   pageChange: [page: number]
-  pageSizeChange: [pageSize: number]
 }>()
 
 const columns = [
@@ -111,7 +110,7 @@ const rows = computed(() => {
         </UTable>
       </div>
 
-      <RickAndMortyPaginationWrapper
+      <RickAndMortyPagination
         :pagination-info="paginationInfo"
         @page-change="emit('pageChange', $event)"
       />

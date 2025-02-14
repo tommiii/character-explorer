@@ -1,27 +1,20 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
+import RickAndMortyGrid from '~/components/RickAndMortyGrid.vue'
+import RickAndMortyTable from '~/components/RickAndMortyTable.vue'
 import { VIEW_TYPES, type ViewType } from '~/constants/views'
 
 const currentPage = ref(1)
 const pageSize = ref(20)
-// const { data } = useRickAndMortyData(`character?page=${currentPage.value}`)
+const view = ref<ViewType>(VIEW_TYPES.TABLE)
 
 const { data, refetch } = useQuery({
-  queryKey: ['data', currentPage, pageSize],
+  queryKey: ['rick-and-morty-data', currentPage, pageSize],
   queryFn: () => fetch(`https://rickandmortyapi.com/api/character?page=${currentPage.value}&per_page=${pageSize.value}`).then(res => res.json()),
-  refetchInterval: 60000, // Auto-refetch every 60 seconds
 })
-
-const view = ref<ViewType>(VIEW_TYPES.TABLE)
 
 function handlePageChange(page: number) {
   currentPage.value = page
-  refetch()
-}
-
-function handlePageSizeChange(size: number) {
-  pageSize.value = size
-  currentPage.value = 1 // Reset to first page when changing page size
   refetch()
 }
 
@@ -32,6 +25,8 @@ watch([currentPage, pageSize], () => {
 definePageMeta({
   title: 'Rick and Morty Characters',
 })
+
+// console.log({ currentPage, totalCount: data?.value?.info?.count, pages: data?.value?.info?.pages })
 </script>
 
 <template>
@@ -66,7 +61,7 @@ definePageMeta({
           leave-from-class="opacity-100 scale-100"
           leave-to-class="opacity-0 scale-95"
         >
-          <DataTableRickAndMortyTable
+          <RickAndMortyTable
             v-if="view === VIEW_TYPES.TABLE"
             :characters="data?.results || []"
             :pagination-info="{
@@ -76,9 +71,8 @@ definePageMeta({
             }"
             :loading="!data"
             @page-change="handlePageChange"
-            @page-size-change="handlePageSizeChange"
           />
-          <DataGridRickAndMortyGrid
+          <RickAndMortyGrid
             v-else
             :characters="data?.results || []"
             :loading="!data"
