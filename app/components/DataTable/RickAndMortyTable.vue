@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PaginationInfo } from '~/types/pagination'
+import RickAndMortyPaginationWrapper from '../Pagination/RickAndMortyPaginationWrapper.vue'
 
 const props = defineProps<{
   characters: any[]

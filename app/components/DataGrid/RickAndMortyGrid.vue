@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { PaginationInfo } from '~/types/pagination'
 import { useRouter } from 'vue-router'
+import RickAndMortyPaginationWrapper from '../Pagination/RickAndMortyPaginationWrapper.vue'
 
-const props = defineProps<{
+defineProps<{
   characters: any[]
   loading?: boolean
   paginationInfo: PaginationInfo
