@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { PaginationInfo } from '~/types/pagination'
+import type { CharacterListItem } from '~/types/rick-and-morty'
 import { useRouter } from 'vue-router'
 import RickAndMortyPagination from './RickAndMortyPagination.vue'
 
-defineProps<{
-  characters: any[]
+const { characters, loading, paginationInfo } = defineProps<{
+  characters: CharacterListItem[]
   loading?: boolean
   paginationInfo: PaginationInfo
 }>()
@@ -14,7 +15,7 @@ const emit = defineEmits<{
 }>()
 
 const router = useRouter()
-async function handleDetails(character: any) {
+async function handleDetails(character: CharacterListItem) {
   await router.push(`/rick-and-morty/${character.id}`)
 }
 </script>

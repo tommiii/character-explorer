@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import type { PaginationInfo } from '~/types/pagination'
+import type { PokemonListItem } from '~/types/pokemon'
 import { useRouter } from 'vue-router'
 import PokemonPagination from './PokemonPagination.vue'
 
-interface Props {
-  pokemons: any[]
+const { pokemons, loading, paginationInfo } = defineProps<{
+  pokemons: PokemonListItem[]
   loading?: boolean
   paginationInfo: PaginationInfo
-}
-
-defineProps<Props>()
+}>()
 
 const emit = defineEmits<{
   pageChange: [page: number]
@@ -17,7 +16,7 @@ const emit = defineEmits<{
 }>()
 
 const router = useRouter()
-async function handleDetails(pokemon: any) {
+async function handleDetails(pokemon: PokemonListItem) {
   await router.push(`/pokemon/${pokemon.id}`)
 }
 </script>

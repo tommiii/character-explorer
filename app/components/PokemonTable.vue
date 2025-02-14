@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { PaginationInfo } from '~/types/pagination'
+import type { PokemonListItem } from '~/types/pokemon'
 import PokemonPagination from './PokemonPagination.vue'
 
-const props = defineProps<{
-  pokemon: any[]
+const { pokemon, loading, paginationInfo } = defineProps<{
+  pokemon: PokemonListItem[]
   loading?: boolean
   paginationInfo: PaginationInfo
 }>()
@@ -37,11 +38,10 @@ const columns = [
 ]
 
 const rows = computed(() => {
-  return props.pokemon?.map(pokemon => ({
-    id: pokemon.id,
-    image: pokemon.image,
-    name: pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1),
-    url: pokemon.url,
+  return pokemon?.map(item => ({
+    ...item,
+    name: item.name.charAt(0).toUpperCase() + item.name.slice(1),
+
   })) || []
 })
 </script>

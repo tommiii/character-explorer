@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { PaginationInfo } from '~/types/pagination'
-import { computed } from 'vue'
 
-defineProps<{
+const { paginationInfo } = defineProps<{
   paginationInfo: PaginationInfo
 }>()
 

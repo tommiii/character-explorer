@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { PaginationInfo } from '~/types/pagination'
+import type { CharacterListItem } from '~/types/rick-and-morty'
 import RickAndMortyPagination from './RickAndMortyPagination.vue'
 
-const props = defineProps<{
-  characters: any[]
+const { characters, loading, paginationInfo } = defineProps<{
+  characters: CharacterListItem[]
   loading?: boolean
   paginationInfo: PaginationInfo
 }>()
@@ -54,14 +55,6 @@ const columns = [
     class: 'w-[100px] text-center',
   },
 ]
-
-const rows = computed(() => {
-  return props.characters?.map(character => ({
-    id: character.id,
-    ...character,
-    origin: character.origin.name,
-  })) || []
-})
 </script>
 
 <template>
@@ -69,7 +62,7 @@ const rows = computed(() => {
     <div class="w-full">
       <div class="max-w-full overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
         <UTable
-          :rows="rows"
+          :rows="characters"
           :columns="columns"
           :loading="loading"
           hover

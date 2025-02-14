@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PaginationInfo } from '~/types/pagination'
 
-defineProps<{
+const { paginationInfo } = defineProps<{
   paginationInfo: PaginationInfo
 }>()
 
