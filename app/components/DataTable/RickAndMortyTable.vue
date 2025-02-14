@@ -1,10 +1,23 @@
 <script setup lang="ts">
+import type { PaginationInfo } from '~/types/pagination'
+
 const props = defineProps<{
   characters: any[]
   loading?: boolean
+  paginationInfo: PaginationInfo
+}>()
+
+const emit = defineEmits<{
+  pageChange: [page: number]
+  pageSizeChange: [pageSize: number]
 }>()
 
 const columns = [
+  {
+    key: 'image',
+    label: '',
+    class: 'w-[60px]',
+  },
   {
     key: 'name',
     label: 'Character',
@@ -75,6 +88,14 @@ const rows = computed(() => {
             </div>
           </template>
 
+          <template #image-data="{ row }">
+            <img
+              :src="row.image"
+              :alt="row.name"
+              class="w-10 h-10 rounded-full object-cover"
+            >
+          </template>
+
           <template #actions-data="{ row }">
             <NuxtLink :to="`/rick-and-morty/${row.id}`">
               <UButton
@@ -88,6 +109,11 @@ const rows = computed(() => {
           </template>
         </UTable>
       </div>
+
+      <RickAndMortyPaginationWrapper
+        :pagination-info="paginationInfo"
+        @page-change="emit('pageChange', $event)"
+      />
     </div>
   </div>
 </template>

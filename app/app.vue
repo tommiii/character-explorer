@@ -3,14 +3,11 @@ import { appName } from '~/constants'
 
 useHead({
   title: appName,
-  bodyAttrs: {
-    class: 'bg-stone-50 text-stone-800 dark:bg-stone-900 dark:text-stone-50',
-  },
+  titleTemplate: `%s - ${appName}`,
 })
 </script>
 
 <template>
-  <VitePwaManifest />
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>

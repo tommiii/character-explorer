@@ -1,3 +1,39 @@
+<script setup lang="ts">
+import { useQuery } from '@tanstack/vue-query'
+import { VIEW_TYPES, type ViewType } from '~/constants/views'
+
+const currentPage = ref(1)
+const pageSize = ref(20)
+// const { data } = useRickAndMortyData(`character?page=${currentPage.value}`)
+
+const { data, refetch } = useQuery({
+  queryKey: ['data', currentPage, pageSize],
+  queryFn: () => fetch(`https://rickandmortyapi.com/api/character?page=${currentPage.value}&per_page=${pageSize.value}`).then(res => res.json()),
+  refetchInterval: 60000, // Auto-refetch every 60 seconds
+})
+
+const view = ref<ViewType>(VIEW_TYPES.TABLE)
+
+function handlePageChange(page: number) {
+  currentPage.value = page
+  refetch()
+}
+
+function handlePageSizeChange(size: number) {
+  pageSize.value = size
+  currentPage.value = 1 // Reset to first page when changing page size
+  refetch()
+}
+
+watch([currentPage, pageSize], () => {
+  refreshNuxtData()
+})
+
+definePageMeta({
+  title: 'Rick and Morty Characters',
+})
+</script>
+
 <template>
   <div class="py-8">
     <UContainer>
@@ -9,14 +45,14 @@
           <UButton
             :color="view === VIEW_TYPES.TABLE ? 'primary' : 'gray'"
             :variant="view === VIEW_TYPES.TABLE ? 'solid' : 'ghost'"
-            @click="view = VIEW_TYPES.TABLE"
             icon="i-heroicons-table-cells"
+            @click="view = VIEW_TYPES.TABLE"
           />
           <UButton
             :color="view === VIEW_TYPES.GRID ? 'primary' : 'gray'"
             :variant="view === VIEW_TYPES.GRID ? 'solid' : 'ghost'"
-            @click="view = VIEW_TYPES.GRID"
             icon="i-heroicons-squares-2x2"
+            @click="view = VIEW_TYPES.GRID"
           />
         </UButtonGroup>
       </div>
@@ -32,27 +68,29 @@
         >
           <DataTableRickAndMortyTable
             v-if="view === VIEW_TYPES.TABLE"
-            :characters="data?.results"
+            :characters="data?.results || []"
+            :pagination-info="{
+              currentPage,
+              totalCount: data?.info?.count,
+              pages: data?.info?.pages,
+            }"
             :loading="!data"
+            @page-change="handlePageChange"
+            @page-size-change="handlePageSizeChange"
           />
           <DataGridRickAndMortyGrid
             v-else
-            :characters="data?.results"
+            :characters="data?.results || []"
             :loading="!data"
+            :pagination-info="{
+              currentPage,
+              totalCount: data?.info?.count,
+              pages: data?.info?.pages,
+            }"
+            @page-change="handlePageChange"
           />
         </Transition>
       </div>
     </UContainer>
   </div>
 </template>
-
-<script setup lang="ts">
-import { VIEW_TYPES, type ViewType } from '~/constants/views'
-
-const { data } = useRickAndMortyData('character')
-const view = ref<ViewType>(VIEW_TYPES.TABLE)
-
-definePageMeta({
-  title: 'Rick and Morty Characters'
-})
-</script> 
