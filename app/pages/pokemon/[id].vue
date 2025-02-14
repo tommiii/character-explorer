@@ -20,7 +20,7 @@ const { data: species, error: speciesError } = useQuery<PokemonSpecies>({
 })
 
 const error = computed(() => {
-  return pokemonError || speciesError
+  return pokemonError?.value || speciesError?.value
 })
 
 const description = computed(() => {
