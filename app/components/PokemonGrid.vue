@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PaginationInfo } from '~/types/pagination'
 import { useRouter } from 'vue-router'
+import PokemonPagination from './PokemonPagination.vue'
 
 defineProps<{
   pokemons: any[]
@@ -10,6 +11,7 @@ defineProps<{
 
 const emit = defineEmits<{
   pageChange: [page: number]
+  sizeChange: [size: number]
 }>()
 
 const router = useRouter()
@@ -69,9 +71,10 @@ async function handleDetails(pokemon: any) {
       </div>
     </div>
 
-    <RickAndMortyPaginationWrapper
+    <PokemonPagination
       :pagination-info="paginationInfo"
       @page-change="emit('pageChange', $event)"
+      @size-change="emit('sizeChange', $event)"
     />
   </div>
 </template>

@@ -14,9 +14,14 @@ const emit = defineEmits<{
 
 const columns = [
   {
+    key: 'id',
+    label: '#',
+    class: 'w-16',
+  },
+  {
     key: 'image',
     label: '',
-    class: 'w-[60px]',
+    class: 'w-[80px]',
   },
   {
     key: 'name',
@@ -52,6 +57,7 @@ const columns = [
 
 const rows = computed(() => {
   return props.characters?.map(character => ({
+    id: character.id,
     ...character,
     origin: character.origin.name,
   })) || []
@@ -92,7 +98,7 @@ const rows = computed(() => {
             <img
               :src="row.image"
               :alt="row.name"
-              class="w-10 h-10 rounded-full object-cover"
+              class="w-16 h-16 rounded-full object-cover"
             >
           </template>
 

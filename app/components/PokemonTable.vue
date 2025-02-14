@@ -1,7 +1,16 @@
 <script setup lang="ts">
+import type { PaginationInfo } from '~/types/pagination'
+import PokemonPagination from './PokemonPagination.vue'
+
 const props = defineProps<{
   pokemon: any[]
   loading?: boolean
+  paginationInfo: PaginationInfo
+}>()
+
+const emit = defineEmits<{
+  pageChange: [page: number]
+  sizeChange: [size: number]
 }>()
 
 const columns = [
@@ -9,6 +18,11 @@ const columns = [
     key: 'id',
     label: '#',
     class: 'w-16',
+  },
+  {
+    key: 'image',
+    label: '',
+    class: 'w-[80px]',
   },
   {
     key: 'name',
@@ -23,11 +37,15 @@ const columns = [
 ]
 
 const rows = computed(() => {
-  return props.pokemon?.map((pokemon, index) => ({
-    id: index + 1,
-    name: pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1),
-    url: pokemon.url,
-  })) || []
+  return props.pokemon?.map((pokemon) => {
+    const id = pokemon.url.split('/').filter(Boolean).pop()
+    return {
+      id,
+      image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`,
+      name: pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1),
+      url: pokemon.url,
+    }
+  }) || []
 })
 </script>
 
@@ -61,6 +79,14 @@ const rows = computed(() => {
             </div>
           </template>
 
+          <template #image-data="{ row }">
+            <img
+              :src="row.image"
+              :alt="row.name"
+              class="w-16 h-16 object-contain"
+            >
+          </template>
+
           <template #actions-data="{ row }">
             <NuxtLink :to="`/pokemon/${row.id}`">
               <UButton
@@ -75,5 +101,11 @@ const rows = computed(() => {
         </UTable>
       </div>
     </div>
+
+    <PokemonPagination
+      :pagination-info="paginationInfo"
+      @page-change="emit('pageChange', $event)"
+      @size-change="emit('sizeChange', $event)"
+    />
   </div>
 </template>
