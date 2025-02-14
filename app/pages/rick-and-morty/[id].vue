@@ -1,37 +1,10 @@
 <script setup lang="ts">
+import type { Character, Episode } from '~/types/rick-and-morty'
 import { useQuery } from '@tanstack/vue-query'
-
-interface Episode {
-  id: string
-  name: string
-  episode: string
-  air_date: string
-}
-
-interface Character {
-  id: number
-  name: string
-  status: string
-  species: string
-  type: string
-  gender: string
-  origin: {
-    name: string
-    url: string
-  }
-  location: {
-    name: string
-    url: string
-  }
-  image: string
-  episode: string[]
-  url: string
-  created: string
-}
 
 const route = useRoute()
 const id = computed(() => {
-  const paramId = route.params.id
+  const paramId = (route.params as { id: string | string[] }).id
   return typeof paramId === 'string' ? paramId : Array.isArray(paramId) ? paramId[0] : ''
 })
 
@@ -40,9 +13,7 @@ const { data: character, isLoading: pending } = useQuery<Character>({
   queryFn: () => fetch(`https://rickandmortyapi.com/api/character/${id.value}`).then(res => res.json()),
 })
 
-// Fetch episode details for each episode URL
 const episodes = ref<Episode[]>([])
-const isOpen = ref(true)
 
 if (character.value) {
   const episodeData = await Promise.all(
@@ -82,14 +53,6 @@ useHead({
     },
   ],
 })
-
-function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-}
 </script>
 
 <template>
@@ -114,7 +77,6 @@ function formatDate(dateString: string) {
         </div>
 
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-          <!-- Header Section -->
           <div class="relative bg-gray-100 dark:bg-gray-700/50 p-8">
             <div class="absolute top-4 right-4">
               <span class="text-2xl font-bold text-gray-400">
@@ -152,8 +114,6 @@ function formatDate(dateString: string) {
               </div>
             </div>
           </div>
-
-          <!-- Details Section -->
           <div class="p-6 space-y-8">
             <div>
               <h2 class="text-xl font-semibold mb-4">

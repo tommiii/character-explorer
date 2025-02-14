@@ -1,78 +1,10 @@
 <script setup lang="ts">
+import type { Pokemon, PokemonSpecies } from '~/types/pokemon'
 import { useQuery } from '@tanstack/vue-query'
-
-interface PokemonAbility {
-  ability: {
-    name: string
-    url: string
-  }
-  is_hidden: boolean
-  slot: number
-}
-
-interface PokemonType {
-  slot: number
-  type: {
-    name: string
-    url: string
-  }
-}
-
-interface PokemonStat {
-  base_stat: number
-  effort: number
-  stat: {
-    name: string
-    url: string
-  }
-}
-
-interface PokemonSprites {
-  front_default: string
-  back_default: string
-  front_shiny: string
-  back_shiny: string
-  other: {
-    'official-artwork': {
-      front_default: string
-    }
-  }
-}
-
-interface Pokemon {
-  id: number
-  name: string
-  base_experience: number
-  height: number
-  weight: number
-  abilities: PokemonAbility[]
-  types: PokemonType[]
-  stats: PokemonStat[]
-  sprites: PokemonSprites
-  species: {
-    name: string
-    url: string
-  }
-}
-
-interface PokemonSpecies {
-  flavor_text_entries: Array<{
-    flavor_text: string
-    language: {
-      name: string
-    }
-  }>
-  genera: Array<{
-    genus: string
-    language: {
-      name: string
-    }
-  }>
-}
 
 const route = useRoute()
 const id = computed(() => {
-  const paramId = route.params.id
+  const paramId = (route.params as { id: string | string[] }).id
   return typeof paramId === 'string' ? paramId : Array.isArray(paramId) ? paramId[0] : ''
 })
 
@@ -85,6 +17,10 @@ const { data: species, error: speciesError } = useQuery<PokemonSpecies>({
   queryKey: ['pokemon-species', id],
   queryFn: () => fetch(`https://pokeapi.co/api/v2/pokemon-species/${id.value}`).then(res => res.json()),
   enabled: !!pokemon.value,
+})
+
+const error = computed(() => {
+  return pokemonError || speciesError
 })
 
 const description = computed(() => {
@@ -140,9 +76,6 @@ function formatNumber(num: number) {
         <h1 class="text-2xl font-bold text-red-600">
           Error loading Pokémon
         </h1>
-        <p class="text-gray-600">
-          {{ error.message }}
-        </p>
         <NuxtLink to="/pokemon">
           <UButton icon="i-heroicons-arrow-left">
             Back to list
@@ -171,7 +104,6 @@ function formatNumber(num: number) {
         </div>
 
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-          <!-- Header Section -->
           <div class="relative bg-gray-100 dark:bg-gray-700/50 p-8">
             <div class="absolute top-4 right-4">
               <span class="text-2xl font-bold text-gray-400">
@@ -231,10 +163,7 @@ function formatNumber(num: number) {
               </div>
             </div>
           </div>
-
-          <!-- Details Section -->
           <div class="p-6 space-y-8">
-            <!-- Base Stats -->
             <div>
               <h2 class="text-xl font-semibold mb-4">
                 Base Stats
@@ -259,8 +188,6 @@ function formatNumber(num: number) {
                 </div>
               </div>
             </div>
-
-            <!-- Physical Characteristics -->
             <div>
               <h2 class="text-xl font-semibold mb-4">
                 Physical Characteristics
