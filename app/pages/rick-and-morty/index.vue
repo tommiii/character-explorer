@@ -158,17 +158,18 @@ definePageMeta({
               v-if="view === VIEW_TYPES.TABLE"
               :characters="data?.results || []"
               :loading="isLoading"
-              :pagination-info="paginationInfo"
-              @page-change="handlePageChange"
             />
             <RickAndMortyGrid
               v-else
               :characters="data?.results || []"
               :loading="isLoading"
-              :pagination-info="paginationInfo"
-              @page-change="handlePageChange"
             />
           </Transition>
+          <BasePagination
+            :pagination-info="paginationInfo"
+            @page-change="handlePageChange"
+          />
+
         </div>
       </div>
     </UContainer>

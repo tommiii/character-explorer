@@ -1,18 +1,12 @@
 <script setup lang="ts">
-import type { PaginationInfo } from '~/types/pagination'
 import type { CharacterListItem } from '~/types/rick-and-morty'
 import { useRouter } from 'vue-router'
-import BasePagination from '../BasePagination.vue'
 
-const { characters, loading, paginationInfo } = defineProps<{
+const { characters, loading } = defineProps<{
   characters: CharacterListItem[]
   loading?: boolean
-  paginationInfo: PaginationInfo
 }>()
 
-const emit = defineEmits<{
-  pageChange: [page: number]
-}>()
 
 const router = useRouter()
 async function handleDetails(character: CharacterListItem) {
@@ -74,10 +68,5 @@ async function handleDetails(character: CharacterListItem) {
         </div>
       </div>
     </div>
-    <BasePagination
-      :pagination-info="paginationInfo"
-      item-name="Rick and Morty Character"
-      @page-change="emit('pageChange', $event)"
-    />
   </div>
 </template>
