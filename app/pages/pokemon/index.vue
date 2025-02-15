@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import type { PokemonApiResponse, PokemonDetail, PokemonListResult } from '~/types/pokemon'
+import type { PokemonApiResponse, PokemonDetail, PokemonListItem, PokemonListResult } from '~/types/pokemon'
 import { useNuxtApp } from '#app'
 import { useQuery } from '@tanstack/vue-query'
-import BaseGrid from '~/components/BaseGrid.vue'
-import BaseTable from '~/components/BaseTable.vue'
+import PokemonGrid from '~/components/Pokemon/PokemonGrid.vue'
+import PokemonTable from '~/components/Pokemon/PokemonTable.vue'
 import {
-  POKEMON_GRID_CONFIG,
   POKEMON_PAGE_SIZE_OPTIONS,
-  POKEMON_TABLE_COLUMNS,
-  POKEMON_TABLE_CONFIG,
 } from '~/constants/pokemon'
 import { VIEW_TYPES, type ViewType } from '~/constants/views'
 
@@ -37,7 +34,7 @@ const { data, refetch, isLoading } = useQuery({
           id: detail.id,
           name: pokemon.name,
           image: detail.sprites.other['official-artwork'].front_default,
-        }
+        } satisfies PokemonListItem
       }),
     )
 
@@ -59,7 +56,7 @@ function handlePageSizeChange(size: number) {
   refetch()
 }
 
-const items = computed(() => {
+const items = computed<PokemonListItem[]>(() => {
   return data.value?.results?.map(pokemon => ({
     ...pokemon,
     name: pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1),
@@ -121,25 +118,20 @@ definePageMeta({
           leave-from-class="opacity-100 scale-100"
           leave-to-class="opacity-0 scale-95"
         >
-          <BaseTable
+          <PokemonTable
             v-if="view === VIEW_TYPES.TABLE"
-            :rows="items"
-            :columns="POKEMON_TABLE_COLUMNS"
+            :items="items"
             :loading="isLoading"
             :pagination-info="paginationInfo"
-            v-bind="POKEMON_TABLE_CONFIG"
-            show-page-size
             :page-size-options="POKEMON_PAGE_SIZE_OPTIONS"
             @page-change="handlePageChange"
             @size-change="handlePageSizeChange"
           />
-          <BaseGrid
+          <PokemonGrid
             v-else
             :items="items"
             :loading="isLoading"
             :pagination-info="paginationInfo"
-            v-bind="POKEMON_GRID_CONFIG"
-            show-page-size
             :page-size-options="POKEMON_PAGE_SIZE_OPTIONS"
             @page-change="handlePageChange"
             @size-change="handlePageSizeChange"

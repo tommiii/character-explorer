@@ -22,15 +22,3 @@ export const POKEMON_TABLE_COLUMNS = [
     class: 'w-[100px] text-center',
   },
 ]
-
-export const POKEMON_GRID_CONFIG = {
-  itemName: 'Pokémon',
-  detailsPath: '/pokemon',
-  imageClass: 'object-contain',
-  imageContainerClass: 'bg-gray-50 dark:bg-gray-900',
-}
-
-export const POKEMON_TABLE_CONFIG = {
-  ...POKEMON_GRID_CONFIG,
-  imageClass: 'w-20 h-20 object-contain',
-}

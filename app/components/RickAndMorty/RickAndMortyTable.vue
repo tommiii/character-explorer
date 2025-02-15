@@ -1,29 +1,17 @@
 <script setup lang="ts">
 import type { PaginationInfo } from '~/types/pagination'
+import type { CharacterListItem } from '~/types/rick-and-morty'
+import {  RICK_AND_MORTY_TABLE_COLUMNS } from '~/constants/rick-and-morty'
+import BasePagination from '../BasePagination.vue'
 
-interface Column {
-  key: string
-  label: string
-  class?: string
-}
-
-interface Props {
-  rows: any[]
-  columns: Column[]
+const { characters, loading, paginationInfo } = defineProps<{
+  characters: CharacterListItem[]
   loading?: boolean
   paginationInfo: PaginationInfo
-  itemName: string
-  showPageSize?: boolean
-  pageSizeOptions?: number[]
-  detailsPath: string
-  imageClass?: string
-}
-
-defineProps<Props>()
+}>()
 
 const emit = defineEmits<{
   pageChange: [page: number]
-  sizeChange: [size: number]
 }>()
 
 const isMobile = ref(false)
@@ -48,40 +36,37 @@ function checkMobile() {
       <!-- Mobile Card View -->
       <div v-if="isMobile" class="space-y-4">
         <div
-          v-for="row in rows"
-          :key="row.id"
+          v-for="character in characters"
+          :key="character.id"
           class="bg-white dark:bg-stone-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700"
         >
           <div class="flex gap-4">
             <img
-              v-if="row.image"
-              :src="row.image"
-              :alt="row.name"
+              :src="character.image"
+              :alt="character.name"
               class="w-20 h-20 rounded-lg object-cover"
             >
             <div class="flex-1 min-w-0">
               <h3 class="font-medium text-lg mb-1 truncate">
-                {{ row.name }}
+                {{ character.name }}
               </h3>
               <div class="space-y-1">
-                <template v-if="row.status">
-                  <p class="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
-                    <UBadge
-                      :color="row.status === 'Alive' ? 'green' : row.status === 'Dead' ? 'red' : 'gray'"
-                      size="sm"
-                    >
-                      {{ row.status }}
-                    </UBadge>
-                    <span class="text-gray-400">|</span>
-                    {{ row.species }}
-                  </p>
-                  <p class="text-sm text-gray-600 dark:text-gray-400 truncate">
-                    From: {{ row.origin?.name }}
-                  </p>
-                </template>
+                <p class="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
+                  <UBadge
+                    :color="character.status === 'Alive' ? 'green' : character.status === 'Dead' ? 'red' : 'gray'"
+                    size="sm"
+                  >
+                    {{ character.status }}
+                  </UBadge>
+                  <span class="text-gray-400">|</span>
+                  {{ character.species }}
+                </p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 truncate">
+                  From: {{ character.origin.name }}
+                </p>
               </div>
               <div class="mt-3">
-                <NuxtLink :to="`${detailsPath}/${row.id}`">
+                <NuxtLink :to="`/rick-and-morty/${character.id}`">
                   <UButton
                     size="sm"
                     color="primary"
@@ -100,8 +85,8 @@ function checkMobile() {
       <!-- Desktop Table View -->
       <div v-else class="max-w-full overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
         <UTable
-          :rows="rows"
-          :columns="columns"
+          :rows="characters"
+          :columns="RICK_AND_MORTY_TABLE_COLUMNS"
           :loading="loading"
           hover
           class="w-full"
@@ -129,26 +114,16 @@ function checkMobile() {
             <img
               :src="row.image"
               :alt="row.name"
-              :class="imageClass"
+              class="w-16 h-16 rounded-full object-cover"
             >
-          </template>
-
-          <template #status-data="{ row }">
-            <UBadge
-              v-if="row.status"
-              :color="row.status === 'Alive' ? 'green' : row.status === 'Dead' ? 'red' : 'gray'"
-              size="sm"
-            >
-              {{ row.status }}
-            </UBadge>
           </template>
 
           <template #origin-data="{ row }">
-            {{ row.origin?.name }}
+            {{ row.origin.name }}
           </template>
 
           <template #actions-data="{ row }">
-            <NuxtLink :to="`${detailsPath}/${row.id}`">
+            <NuxtLink :to="`/rick-and-morty/${row.id}`">
               <UButton
                 size="sm"
                 color="primary"
@@ -163,11 +138,8 @@ function checkMobile() {
 
       <BasePagination
         :pagination-info="paginationInfo"
-        :item-name="itemName"
-        :show-page-size="showPageSize"
-        :page-size-options="pageSizeOptions"
+        item-name="Characters"
         @page-change="emit('pageChange', $event)"
-        @size-change="emit('sizeChange', $event)"
       />
     </div>
   </div>

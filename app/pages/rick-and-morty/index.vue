@@ -156,18 +156,17 @@ definePageMeta({
             leave-from-class="opacity-100 scale-100"
             leave-to-class="opacity-0 scale-95"
           >
-            <BaseTable
+            <RickAndMortyTable
               v-if="view === VIEW_TYPES.TABLE"
-              :rows="data?.results || []"
-              :columns="RICK_AND_MORTY_TABLE_COLUMNS"
+              :characters="data?.results || []"
               :loading="isLoading"
               :pagination-info="paginationInfo"
               v-bind="RICK_AND_MORTY_TABLE_CONFIG"
               @page-change="handlePageChange"
             />
-            <BaseGrid
+            <RickAndMortyGrid
               v-else
-              :items="data?.results || []"
+              :characters="data?.results || []"
               :loading="isLoading"
               :pagination-info="paginationInfo"
               v-bind="RICK_AND_MORTY_GRID_CONFIG"
