@@ -1,3 +1,14 @@
+interface ApiUrls {
+  pokemon: string
+  rickAndMorty: string
+}
+
+declare module '#app' {
+  interface NuxtApp {
+    $apiUrls: ApiUrls
+  }
+}
+
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
 
