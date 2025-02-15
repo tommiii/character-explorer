@@ -1,15 +1,11 @@
-import { pwa } from './app/config/pwa'
 import { appDescription } from './app/constants/index'
 
 export default defineNuxtConfig({
   modules: [
     '@vueuse/nuxt',
     '@pinia/nuxt',
-    '@vite-pwa/nuxt',
     '@nuxt/eslint',
     '@nuxt/ui',
-    'nuxt-api-party',
-    '@nuxt/content',
     '@nuxt/image',
   ],
 
@@ -27,7 +23,7 @@ export default defineNuxtConfig({
     },
     prerender: {
       crawlLinks: false,
-      routes: ['/', '/assignment'],
+      routes: ['/'],
     },
   },
 
@@ -49,8 +45,6 @@ export default defineNuxtConfig({
     },
   },
 
-  pwa,
-
   devtools: {
     enabled: true,
   },
@@ -66,15 +60,4 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: '2024-08-14',
-
-  apiParty: {
-    endpoints: {
-      pokemon: {
-        url: 'https://pokeapi.co/api/v2',
-      },
-      rickAndMorty: {
-        url: 'https://rickandmortyapi.com/api',
-      },
-    },
-  },
 })
