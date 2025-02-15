@@ -5,16 +5,13 @@ import { useQuery } from '@tanstack/vue-query'
 import RickAndMortyFilters from '~/components/RickAndMorty/RickAndMortyFilters.vue'
 import RickAndMortyGrid from '~/components/RickAndMorty/RickAndMortyGrid.vue'
 import RickAndMortyTable from '~/components/RickAndMorty/RickAndMortyTable.vue'
-import {
-  RICK_AND_MORTY_PAGE_SIZE,
-} from '~/constants/rick-and-morty'
 import { VIEW_TYPES, type ViewType } from '~/constants/views'
 
 const { $apiUrls } = useNuxtApp()
 
 const currentPage = ref(1)
 const view = ref<ViewType>(VIEW_TYPES.TABLE)
-const pageSize = RICK_AND_MORTY_PAGE_SIZE
+const pageSize = 20
 const activeFilters = ref({})
 const error = ref<string | null>(null)
 

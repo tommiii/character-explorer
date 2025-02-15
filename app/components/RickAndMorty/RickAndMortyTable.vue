@@ -1,6 +1,48 @@
 <script setup lang="ts">
 import type { CharacterListItem } from '~/types/rick-and-morty'
-import { RICK_AND_MORTY_TABLE_COLUMNS } from '~/constants/rick-and-morty'
+
+const RICK_AND_MORTY_TABLE_COLUMNS = [
+  {
+    key: 'id',
+    label: '#',
+    class: 'w-16 hidden sm:table-cell',
+  },
+  {
+    key: 'image',
+    label: '',
+    class: 'w-[80px]',
+  },
+  {
+    key: 'name',
+    label: 'Character',
+    class: 'w-[180px]',
+  },
+  {
+    key: 'status',
+    label: 'Status',
+    class: 'w-[100px] hidden sm:table-cell',
+  },
+  {
+    key: 'species',
+    label: 'Species',
+    class: 'w-[120px] hidden md:table-cell',
+  },
+  {
+    key: 'gender',
+    label: 'Gender',
+    class: 'w-[100px] hidden lg:table-cell',
+  },
+  {
+    key: 'origin',
+    label: 'Origin',
+    class: 'min-w-[160px] hidden md:table-cell',
+  },
+  {
+    key: 'actions',
+    label: 'Actions',
+    class: 'w-[100px] text-center',
+  },
+]
 
 const { characters, loading } = defineProps<{
   characters: CharacterListItem[]
@@ -79,7 +121,7 @@ function checkMobile() {
       <div v-else class="max-w-full overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
         <UTable
           :rows="characters"
-          :columns="rickAndMortyCols"
+          :columns="RICK_AND_MORTY_TABLE_COLUMNS"
           :loading="loading"
           hover
           class="w-full"

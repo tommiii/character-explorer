@@ -4,12 +4,11 @@ import { useNuxtApp } from '#app'
 import { useQuery } from '@tanstack/vue-query'
 import PokemonGrid from '~/components/Pokemon/PokemonGrid.vue'
 import PokemonTable from '~/components/Pokemon/PokemonTable.vue'
-import {
-  POKEMON_PAGE_SIZE_OPTIONS,
-} from '~/constants/pokemon'
 import { VIEW_TYPES, type ViewType } from '~/constants/views'
 
 const { $apiUrls } = useNuxtApp()
+
+const POKEMON_PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
 
 const currentPage = ref(1)
 const pageSize = ref(20)

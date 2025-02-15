@@ -1,8 +1,28 @@
 <script setup lang="ts">
 import type { PokemonListItem } from '~/types/pokemon'
-import { POKEMON_TABLE_COLUMNS } from '~/constants/pokemon'
 
-
+const POKEMON_TABLE_COLUMNS = [
+  {
+    key: 'id',
+    label: '#',
+    class: 'w-16',
+  },
+  {
+    key: 'image',
+    label: '',
+    class: 'w-[100px]',
+  },
+  {
+    key: 'name',
+    label: 'Name',
+    class: 'min-w-[200px]',
+  },
+  {
+    key: 'actions',
+    label: 'Actions',
+    class: 'w-[100px] text-center',
+  },
+]
 
 const { items, loading } = defineProps<{
   items: PokemonListItem[]

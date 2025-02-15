@@ -1,42 +1,20 @@
 <script setup lang="ts">
 import type { Character, Episode } from '~/types/rick-and-morty'
+import { useNuxtApp } from '#app'
 import { useQuery } from '@tanstack/vue-query'
 
+const { $apiUrls } = useNuxtApp()
 const route = useRoute()
 const id = computed(() => {
   const paramId = (route.params as { id: string | string[] }).id
   return typeof paramId === 'string' ? paramId : Array.isArray(paramId) ? paramId[0] : ''
 })
 
+
 const { data: character, isLoading: pending } = useQuery<Character>({
   queryKey: ['character-details', id],
-  queryFn: () => fetch(`https://rickandmortyapi.com/api/character/${id.value}`).then(res => res.json()),
+  queryFn: () => fetch(`${$apiUrls.rickAndMorty}/character/${id.value}`).then(res => res.json()),
 })
-
-const episodes = ref<Episode[]>([])
-
-if (character.value) {
-  const episodeData = await Promise.all(
-    character.value.episode.map(async (episodeUrl) => {
-      try {
-        const { data } = await useRickAndMortyData<Episode>(episodeUrl.replace('https://rickandmortyapi.com/api', ''))
-        if (data.value) {
-          return {
-            id: data.value.id || episodeUrl.split('/').pop() || '',
-            name: data.value.name || 'Unknown Episode',
-            episode: data.value.episode || 'Unknown',
-            air_date: data.value.air_date || 'Unknown',
-          }
-        }
-        return null
-      }
-      catch {
-        return null
-      }
-    }),
-  )
-  episodes.value = episodeData.filter((episode): episode is Episode => episode !== null)
-}
 
 const statusColors = {
   Alive: 'green',
