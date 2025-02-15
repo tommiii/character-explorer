@@ -1,28 +1,76 @@
 <script setup lang="ts">
-import type { PokemonListItem } from '~/types/pokemon'
 import { useQuery } from '@tanstack/vue-query'
-import PokemonGrid from '~/components/PokemonGrid.vue'
-import PokemonTable from '~/components/PokemonTable.vue'
+import BaseGrid from '~/components/BaseGrid.vue'
+import BaseTable from '~/components/BaseTable.vue'
 import { VIEW_TYPES, type ViewType } from '~/constants/views'
+
+interface PokemonListResult {
+  name: string
+  url: string
+}
+
+interface PokemonApiResponse {
+  count: number
+  next: string | null
+  previous: string | null
+  results: PokemonListResult[]
+}
 
 const currentPage = ref(1)
 const pageSize = ref(20)
 const view = ref<ViewType>(VIEW_TYPES.TABLE)
 
-const { data, refetch } = useQuery({
-  queryKey: ['pokemon-data', currentPage, pageSize],
-  queryFn: () => fetch(`https://pokeapi.co/api/v2/pokemon?limit=${pageSize.value}&offset=${(currentPage.value - 1) * pageSize.value}`).then(res => res.json()),
-})
+const columns = [
+  {
+    key: 'id',
+    label: '#',
+    class: 'w-16',
+  },
+  {
+    key: 'image',
+    label: '',
+    class: 'w-[100px]',
+  },
+  {
+    key: 'name',
+    label: 'Name',
+    class: 'min-w-[200px]',
+  },
+  {
+    key: 'actions',
+    label: 'Actions',
+    class: 'w-[100px] text-center',
+  },
+]
 
-const pokemonWithImages = computed(() => {
-  return data.value?.results.map((pokemon: PokemonListItem) => {
-    const id = pokemon.url.split('/').filter(Boolean).pop()
-    return {
-      ...pokemon,
-      id,
-      image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+const { data, refetch, isLoading } = useQuery({
+  queryKey: ['pokemon-list', currentPage, pageSize],
+  queryFn: async () => {
+    const offset = (currentPage.value - 1) * pageSize.value
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${pageSize.value}`)
+    if (!response.ok) {
+      throw new Error('Failed to fetch pokemon')
     }
-  }) || []
+    const data = await response.json() as PokemonApiResponse
+
+    // Fetch additional details for each pokemon to get their images
+    const pokemonDetails = await Promise.all(
+      data.results.map(async (pokemon: PokemonListResult) => {
+        const detailResponse = await fetch(pokemon.url)
+        const detail = await detailResponse.json()
+        return {
+          id: detail.id,
+          name: pokemon.name,
+          image: detail.sprites.other['official-artwork'].front_default,
+        }
+      }),
+    )
+
+    return {
+      ...data,
+      results: pokemonDetails,
+    }
+  },
 })
 
 function handlePageChange(page: number) {
@@ -36,20 +84,27 @@ function handlePageSizeChange(size: number) {
   refetch()
 }
 
+const items = computed(() => {
+  return data.value?.results?.map(pokemon => ({
+    ...pokemon,
+    name: pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1),
+  })) || []
+})
+
 const paginationInfo = computed(() => {
-  const firstItem = pokemonWithImages.value[0]?.id
-  const lastItem = pokemonWithImages.value[pokemonWithImages.value.length - 1]?.id
+  const firstItemNumber = ((currentPage.value - 1) * pageSize.value) + 1
+  const lastItemNumber = Math.min(currentPage.value * pageSize.value, data.value?.count || 0)
 
   return {
     currentPage: currentPage.value,
-    totalCount: data?.value?.count || 0,
+    totalCount: data.value?.count || 0,
     pageSize: pageSize.value,
-    firstItemNumber: firstItem ? Number.parseInt(firstItem) : ((currentPage.value - 1) * pageSize.value) + 1,
-    lastItemNumber: lastItem ? Number.parseInt(lastItem) : Math.min(currentPage.value * pageSize.value, data?.value?.count || 0),
+    firstItemNumber,
+    lastItemNumber,
   }
 })
 
-watch([currentPage, pageSize], () => {
+watch([currentPage], () => {
   refreshNuxtData()
 })
 
@@ -80,6 +135,7 @@ definePageMeta({
           />
         </UButtonGroup>
       </div>
+
       <div class="w-full">
         <Transition
           mode="out-in"
@@ -90,19 +146,31 @@ definePageMeta({
           leave-from-class="opacity-100 scale-100"
           leave-to-class="opacity-0 scale-95"
         >
-          <PokemonTable
+          <BaseTable
             v-if="view === VIEW_TYPES.TABLE"
-            :pokemon="pokemonWithImages"
-            :loading="!data"
+            :rows="items"
+            :columns="columns"
+            :loading="isLoading"
             :pagination-info="paginationInfo"
+            item-name="Pokémon"
+            details-path="/pokemon"
+            show-page-size
+            :page-size-options="[10, 20, 50, 100]"
+            image-class="w-20 h-20 object-contain"
             @page-change="handlePageChange"
             @size-change="handlePageSizeChange"
           />
-          <PokemonGrid
+          <BaseGrid
             v-else
-            :pokemons="pokemonWithImages"
-            :loading="!data"
+            :items="items"
+            :loading="isLoading"
             :pagination-info="paginationInfo"
+            item-name="Pokémon"
+            details-path="/pokemon"
+            show-page-size
+            :page-size-options="[10, 20, 50, 100]"
+            image-class="object-contain"
+            image-container-class="bg-gray-50 dark:bg-gray-900"
             @page-change="handlePageChange"
             @size-change="handlePageSizeChange"
           />

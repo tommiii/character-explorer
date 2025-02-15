@@ -1,21 +1,9 @@
 <script setup lang="ts">
-import type { UseQueryOptions } from '@tanstack/vue-query'
 import type { CharacterListItem } from '~/types/rick-and-morty'
 import { useQuery } from '@tanstack/vue-query'
-import RickAndMortyFilters from '~/components/RickAndMortyFilters.vue'
-import RickAndMortyGrid from '~/components/RickAndMortyGrid.vue'
-import RickAndMortyTable from '~/components/RickAndMortyTable.vue'
+import BaseGrid from '~/components/BaseGrid.vue'
+import BaseTable from '~/components/BaseTable.vue'
 import { VIEW_TYPES, type ViewType } from '~/constants/views'
-
-interface ApiResponse {
-  info: {
-    count: number
-    pages: number
-    next: string | null
-    prev: string | null
-  }
-  results: CharacterListItem[]
-}
 
 const currentPage = ref(1)
 const view = ref<ViewType>(VIEW_TYPES.TABLE)
@@ -23,7 +11,50 @@ const pageSize = 20 // Rick and Morty API has fixed page size
 const activeFilters = ref({})
 const error = ref<string | null>(null)
 
-const queryOptions: UseQueryOptions<ApiResponse, Error> = {
+const columns = [
+  {
+    key: 'id',
+    label: '#',
+    class: 'w-16 hidden sm:table-cell',
+  },
+  {
+    key: 'image',
+    label: '',
+    class: 'w-[80px]',
+  },
+  {
+    key: 'name',
+    label: 'Character',
+    class: 'w-[180px]',
+  },
+  {
+    key: 'status',
+    label: 'Status',
+    class: 'w-[100px] hidden sm:table-cell',
+  },
+  {
+    key: 'species',
+    label: 'Species',
+    class: 'w-[120px] hidden md:table-cell',
+  },
+  {
+    key: 'gender',
+    label: 'Gender',
+    class: 'w-[100px] hidden lg:table-cell',
+  },
+  {
+    key: 'origin',
+    label: 'Origin',
+    class: 'min-w-[160px] hidden md:table-cell',
+  },
+  {
+    key: 'actions',
+    label: 'Actions',
+    class: 'w-[100px] text-center',
+  },
+]
+
+const { data, refetch, isLoading } = useQuery({
   queryKey: ['rick-and-morty-data', currentPage, activeFilters],
   queryFn: async () => {
     error.value = null
@@ -57,9 +88,7 @@ const queryOptions: UseQueryOptions<ApiResponse, Error> = {
     return failureCount < 2 && error.message !== 'Failed to fetch characters'
   },
   retryDelay: 1000, // Wait 1 second between retries
-}
-
-const { data, refetch, isLoading } = useQuery(queryOptions)
+})
 
 // Handle errors globally
 watch(isLoading, (loading) => {
@@ -161,18 +190,26 @@ definePageMeta({
             leave-from-class="opacity-100 scale-100"
             leave-to-class="opacity-0 scale-95"
           >
-            <RickAndMortyTable
+            <BaseTable
               v-if="view === VIEW_TYPES.TABLE"
-              :characters="data?.results || []"
+              :rows="data?.results || []"
+              :columns="columns"
               :loading="isLoading"
               :pagination-info="paginationInfo"
+              item-name="Characters"
+              details-path="/rick-and-morty"
               @page-change="handlePageChange"
             />
-            <RickAndMortyGrid
+            <BaseGrid
               v-else
-              :characters="data?.results || []"
+              :items="data?.results || []"
               :loading="isLoading"
               :pagination-info="paginationInfo"
+              item-name="Characters"
+              details-path="/rick-and-morty"
+              show-status
+              show-origin
+              image-class="object-cover"
               @page-change="handlePageChange"
             />
           </Transition>
