@@ -8,7 +8,7 @@ interface Props {
   pageSizeOptions?: number[]
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   itemName: 'items',
   showPageSize: false,
   pageSizeOptions: () => [10, 20, 50, 100],

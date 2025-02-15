@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PaginationInfo } from '~/types/pagination'
 import type { PokemonListItem } from '~/types/pokemon'
-import BasePagination from './BasePagination.vue'
+import BaseTable from './BaseTable.vue'
 
 const { pokemon, loading, paginationInfo } = defineProps<{
   pokemon: PokemonListItem[]
@@ -46,65 +46,17 @@ const rows = computed(() => {
 </script>
 
 <template>
-  <div class="space-y-4">
-    <div class="w-full">
-      <div class="max-w-full overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
-        <UTable
-          :rows="rows"
-          :columns="columns"
-          :loading="loading"
-          hover
-          class="w-full"
-        >
-          <template #loading>
-            <div class="flex items-center justify-center p-4">
-              <UIcon name="i-heroicons-arrow-path" class="animate-spin h-6 w-6" />
-            </div>
-          </template>
-
-          <template #empty-state>
-            <div class="flex flex-col items-center justify-center p-4 text-gray-500">
-              <UIcon name="i-heroicons-inbox" class="h-8 w-8 mb-2" />
-              <p>No data available</p>
-            </div>
-          </template>
-
-          <template #header-cell="{ column }">
-            <div class="flex items-center gap-2" :class="[column.class]">
-              {{ column.label }}
-            </div>
-          </template>
-
-          <template #image-data="{ row }">
-            <img
-              :src="row.image"
-              :alt="row.name"
-              class="w-20 h-20 object-contain"
-            >
-          </template>
-
-          <template #actions-data="{ row }">
-            <NuxtLink :to="`/pokemon/${row.id}`">
-              <UButton
-                size="sm"
-                color="primary"
-                variant="soft"
-              >
-                Details
-              </UButton>
-            </NuxtLink>
-          </template>
-        </UTable>
-      </div>
-    </div>
-
-    <BasePagination
-      :pagination-info="paginationInfo"
-      item-name="Pokémon"
-      show-page-size
-      :page-size-options="[10, 20, 50, 100]"
-      @page-change="emit('pageChange', $event)"
-      @size-change="emit('sizeChange', $event)"
-    />
-  </div>
+  <BaseTable
+    :rows="rows"
+    :columns="columns"
+    :loading="loading"
+    :pagination-info="paginationInfo"
+    item-name="Pokémon"
+    details-path="/pokemon"
+    show-page-size
+    :page-size-options="[10, 20, 50, 100]"
+    image-class="w-20 h-20 object-contain"
+    @page-change="emit('pageChange', $event)"
+    @size-change="emit('sizeChange', $event)"
+  />
 </template>

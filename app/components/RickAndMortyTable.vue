@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PaginationInfo } from '~/types/pagination'
 import type { CharacterListItem } from '~/types/rick-and-morty'
-import BasePagination from './BasePagination.vue'
+import BaseTable from './BaseTable.vue'
 
 const { characters, loading, paginationInfo } = defineProps<{
   characters: CharacterListItem[]
@@ -126,63 +126,16 @@ function checkMobile() {
 
       <!-- Desktop Table View -->
       <div v-else class="max-w-full overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
-        <UTable
+        <BaseTable
           :rows="characters"
           :columns="columns"
           :loading="loading"
-          hover
-          class="w-full"
-        >
-          <template #loading>
-            <div class="flex items-center justify-center p-4">
-              <UIcon name="i-heroicons-arrow-path" class="animate-spin h-6 w-6" />
-            </div>
-          </template>
-
-          <template #empty-state>
-            <div class="flex flex-col items-center justify-center p-4 text-gray-500">
-              <UIcon name="i-heroicons-inbox" class="h-8 w-8 mb-2" />
-              <p>No data available</p>
-            </div>
-          </template>
-
-          <template #header-cell="{ column }">
-            <div class="flex items-center gap-2" :class="[column.class]">
-              {{ column.label }}
-            </div>
-          </template>
-
-          <template #image-data="{ row }">
-            <img
-              :src="row.image"
-              :alt="row.name"
-              class="w-16 h-16 rounded-full object-cover"
-            >
-          </template>
-
-          <template #origin-data="{ row }">
-            {{ row.origin.name }}
-          </template>
-
-          <template #actions-data="{ row }">
-            <NuxtLink :to="`/rick-and-morty/${row.id}`">
-              <UButton
-                size="sm"
-                color="primary"
-                variant="soft"
-              >
-                Details
-              </UButton>
-            </NuxtLink>
-          </template>
-        </UTable>
+          :pagination-info="paginationInfo"
+          item-name="Characters"
+          details-path="/rick-and-morty"
+          @page-change="emit('pageChange', $event)"
+        />
       </div>
-
-      <BasePagination
-        :pagination-info="paginationInfo"
-        item-name="Characters"
-        @page-change="emit('pageChange', $event)"
-      />
     </div>
   </div>
 </template>
