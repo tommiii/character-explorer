@@ -2,13 +2,11 @@
 import type { RickAndMortyApiResponse } from '~/types/rick-and-morty'
 import { useNuxtApp } from '#app'
 import { useQuery } from '@tanstack/vue-query'
-import BaseGrid from '~/components/BaseGrid.vue'
-import BaseTable from '~/components/BaseTable.vue'
+import RickAndMortyFilters from '~/components/RickAndMorty/RickAndMortyFilters.vue'
+import RickAndMortyGrid from '~/components/RickAndMorty/RickAndMortyGrid.vue'
+import RickAndMortyTable from '~/components/RickAndMorty/RickAndMortyTable.vue'
 import {
-  RICK_AND_MORTY_GRID_CONFIG,
   RICK_AND_MORTY_PAGE_SIZE,
-  RICK_AND_MORTY_TABLE_COLUMNS,
-  RICK_AND_MORTY_TABLE_CONFIG,
 } from '~/constants/rick-and-morty'
 import { VIEW_TYPES, type ViewType } from '~/constants/views'
 
@@ -161,7 +159,6 @@ definePageMeta({
               :characters="data?.results || []"
               :loading="isLoading"
               :pagination-info="paginationInfo"
-              v-bind="RICK_AND_MORTY_TABLE_CONFIG"
               @page-change="handlePageChange"
             />
             <RickAndMortyGrid
@@ -169,7 +166,6 @@ definePageMeta({
               :characters="data?.results || []"
               :loading="isLoading"
               :pagination-info="paginationInfo"
-              v-bind="RICK_AND_MORTY_GRID_CONFIG"
               @page-change="handlePageChange"
             />
           </Transition>

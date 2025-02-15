@@ -123,7 +123,6 @@ definePageMeta({
             :items="items"
             :loading="isLoading"
             :pagination-info="paginationInfo"
-            :page-size-options="POKEMON_PAGE_SIZE_OPTIONS"
             @page-change="handlePageChange"
             @size-change="handlePageSizeChange"
           />
@@ -132,7 +131,6 @@ definePageMeta({
             :items="items"
             :loading="isLoading"
             :pagination-info="paginationInfo"
-            :page-size-options="POKEMON_PAGE_SIZE_OPTIONS"
             @page-change="handlePageChange"
             @size-change="handlePageSizeChange"
           />

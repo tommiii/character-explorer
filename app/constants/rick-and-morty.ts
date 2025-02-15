@@ -43,14 +43,3 @@ export const RICK_AND_MORTY_TABLE_COLUMNS = [
   },
 ]
 
-export const RICK_AND_MORTY_GRID_CONFIG = {
-  itemName: 'Characters',
-  detailsPath: '/rick-and-morty',
-  imageClass: 'object-cover',
-  showStatus: true,
-  showOrigin: true,
-}
-
-export const RICK_AND_MORTY_TABLE_CONFIG = {
-  ...RICK_AND_MORTY_GRID_CONFIG,
-}

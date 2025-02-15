@@ -2,7 +2,9 @@
 import type { PaginationInfo } from '~/types/pagination'
 import type { PokemonListItem } from '~/types/pokemon'
 import { useRouter } from 'vue-router'
+import { POKEMON_PAGE_SIZE_OPTIONS } from '~/constants/pokemon'
 import BasePagination from '../BasePagination.vue'
+
 
 const { items, loading, paginationInfo } = defineProps<{
   items: PokemonListItem[]
@@ -68,6 +70,8 @@ async function handleDetails(pokemon: PokemonListItem) {
     <BasePagination
       :pagination-info="paginationInfo"
       item-name="Pokémon"
+      show-page-size
+      :page-size-options="POKEMON_PAGE_SIZE_OPTIONS"
       @page-change="emit('pageChange', $event)"
       @size-change="emit('sizeChange', $event)"
     />
