@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { appDescription } from './app/constants/index'
 
 export default defineNuxtConfig({
@@ -8,6 +9,13 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@nuxt/image',
   ],
+
+  runtimeConfig: {
+    public: {
+      pokemonApiUrl: process.env.NUXT_PUBLIC_POKEMON_API_URL || '',
+      rickAndMortyApiUrl: process.env.NUXT_PUBLIC_RICK_AND_MORTY_API_URL || '',
+    },
+  },
 
   experimental: {
     payloadExtraction: false,

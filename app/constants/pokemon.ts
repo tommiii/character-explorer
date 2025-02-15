@@ -1,5 +1,3 @@
-export const POKEMON_API_URL = 'https://pokeapi.co/api/v2'
-
 export const POKEMON_PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
 
 export const POKEMON_TABLE_COLUMNS = [

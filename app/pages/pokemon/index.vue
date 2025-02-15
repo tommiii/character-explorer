@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import type { PokemonApiResponse, PokemonDetail, PokemonListResult } from '~/types/pokemon'
+import { useNuxtApp } from '#app'
 import { useQuery } from '@tanstack/vue-query'
 import BaseGrid from '~/components/BaseGrid.vue'
 import BaseTable from '~/components/BaseTable.vue'
 import {
-  POKEMON_API_URL,
   POKEMON_GRID_CONFIG,
   POKEMON_PAGE_SIZE_OPTIONS,
   POKEMON_TABLE_COLUMNS,
   POKEMON_TABLE_CONFIG,
 } from '~/constants/pokemon'
 import { VIEW_TYPES, type ViewType } from '~/constants/views'
+
+const { $apiUrls } = useNuxtApp()
 
 const currentPage = ref(1)
 const pageSize = ref(20)
@@ -20,7 +22,7 @@ const { data, refetch, isLoading } = useQuery({
   queryKey: ['pokemon-list', currentPage, pageSize],
   queryFn: async () => {
     const offset = (currentPage.value - 1) * pageSize.value
-    const response = await fetch(`${POKEMON_API_URL}/pokemon?offset=${offset}&limit=${pageSize.value}`)
+    const response = await fetch(`${$apiUrls.pokemon}/pokemon?offset=${offset}&limit=${pageSize.value}`)
     if (!response.ok) {
       throw new Error('Failed to fetch pokemon')
     }

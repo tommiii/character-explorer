@@ -1,5 +1,3 @@
-export const RICK_AND_MORTY_API_URL = 'https://rickandmortyapi.com/api'
-
 export const RICK_AND_MORTY_PAGE_SIZE = 20 // API has fixed page size
 
 export const RICK_AND_MORTY_TABLE_COLUMNS = [

@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import type { CharacterListItem, RickAndMortyApiResponse } from '~/types/rick-and-morty'
+import type { RickAndMortyApiResponse } from '~/types/rick-and-morty'
+import { useNuxtApp } from '#app'
 import { useQuery } from '@tanstack/vue-query'
 import BaseGrid from '~/components/BaseGrid.vue'
 import BaseTable from '~/components/BaseTable.vue'
 import {
-  RICK_AND_MORTY_API_URL,
   RICK_AND_MORTY_GRID_CONFIG,
   RICK_AND_MORTY_PAGE_SIZE,
   RICK_AND_MORTY_TABLE_COLUMNS,
   RICK_AND_MORTY_TABLE_CONFIG,
 } from '~/constants/rick-and-morty'
 import { VIEW_TYPES, type ViewType } from '~/constants/views'
+
+const { $apiUrls } = useNuxtApp()
 
 const currentPage = ref(1)
 const view = ref<ViewType>(VIEW_TYPES.TABLE)
@@ -26,7 +28,7 @@ const { data, refetch, isLoading } = useQuery({
       page: currentPage.value.toString(),
       ...activeFilters.value,
     })
-    const response = await fetch(`${RICK_AND_MORTY_API_URL}/character?${filterParams.toString()}`)
+    const response = await fetch(`${$apiUrls.rickAndMorty}/character?${filterParams.toString()}`)
 
     if (response.status === 404) {
       // API returns 404 when no results are found
