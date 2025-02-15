@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PaginationInfo } from '~/types/pagination'
 import type { PokemonListItem } from '~/types/pokemon'
-import PokemonPagination from './PokemonPagination.vue'
+import BasePagination from './BasePagination.vue'
 
 const { pokemon, loading, paginationInfo } = defineProps<{
   pokemon: PokemonListItem[]
@@ -41,7 +41,6 @@ const rows = computed(() => {
   return pokemon?.map(item => ({
     ...item,
     name: item.name.charAt(0).toUpperCase() + item.name.slice(1),
-
   })) || []
 })
 </script>
@@ -99,8 +98,11 @@ const rows = computed(() => {
       </div>
     </div>
 
-    <PokemonPagination
+    <BasePagination
       :pagination-info="paginationInfo"
+      item-name="Pokémon"
+      show-page-size
+      :page-size-options="[10, 20, 50, 100]"
       @page-change="emit('pageChange', $event)"
       @size-change="emit('sizeChange', $event)"
     />

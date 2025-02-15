@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PaginationInfo } from '~/types/pagination'
 import type { CharacterListItem } from '~/types/rick-and-morty'
-import RickAndMortyPagination from './RickAndMortyPagination.vue'
+import BasePagination from './BasePagination.vue'
 
 const { characters, loading, paginationInfo } = defineProps<{
   characters: CharacterListItem[]
@@ -178,8 +178,9 @@ function checkMobile() {
         </UTable>
       </div>
 
-      <RickAndMortyPagination
+      <BasePagination
         :pagination-info="paginationInfo"
+        item-name="Characters"
         @page-change="emit('pageChange', $event)"
       />
     </div>
