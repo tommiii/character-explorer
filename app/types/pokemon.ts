@@ -1,8 +1,7 @@
 // List view Pokemon type
 export interface PokemonListItem {
-  id: string
+  id: number
   name: string
-  url: string
   image: string
 }
 
@@ -31,6 +30,18 @@ export interface PokemonStat {
     name: string
     url: string
   }
+}
+
+export interface PokemonListResult {
+  name: string
+  url: string
+}
+
+export interface PokemonApiResponse {
+  count: number
+  next: string | null
+  previous: string | null
+  results: PokemonListResult[]
 }
 
 export interface PokemonSprites {
@@ -74,4 +85,10 @@ export interface PokemonSpecies {
       name: string
     }
   }>
+}
+
+export interface PokemonDetail {
+  id: number
+  name: string
+  sprites: PokemonSprites
 }

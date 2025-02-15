@@ -1,53 +1,26 @@
 <script setup lang="ts">
+import type { PokemonApiResponse, PokemonDetail, PokemonListResult } from '~/types/pokemon'
 import { useQuery } from '@tanstack/vue-query'
 import BaseGrid from '~/components/BaseGrid.vue'
 import BaseTable from '~/components/BaseTable.vue'
+import {
+  POKEMON_API_URL,
+  POKEMON_GRID_CONFIG,
+  POKEMON_PAGE_SIZE_OPTIONS,
+  POKEMON_TABLE_COLUMNS,
+  POKEMON_TABLE_CONFIG,
+} from '~/constants/pokemon'
 import { VIEW_TYPES, type ViewType } from '~/constants/views'
-
-interface PokemonListResult {
-  name: string
-  url: string
-}
-
-interface PokemonApiResponse {
-  count: number
-  next: string | null
-  previous: string | null
-  results: PokemonListResult[]
-}
 
 const currentPage = ref(1)
 const pageSize = ref(20)
 const view = ref<ViewType>(VIEW_TYPES.TABLE)
 
-const columns = [
-  {
-    key: 'id',
-    label: '#',
-    class: 'w-16',
-  },
-  {
-    key: 'image',
-    label: '',
-    class: 'w-[100px]',
-  },
-  {
-    key: 'name',
-    label: 'Name',
-    class: 'min-w-[200px]',
-  },
-  {
-    key: 'actions',
-    label: 'Actions',
-    class: 'w-[100px] text-center',
-  },
-]
-
 const { data, refetch, isLoading } = useQuery({
   queryKey: ['pokemon-list', currentPage, pageSize],
   queryFn: async () => {
     const offset = (currentPage.value - 1) * pageSize.value
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${pageSize.value}`)
+    const response = await fetch(`${POKEMON_API_URL}/pokemon?offset=${offset}&limit=${pageSize.value}`)
     if (!response.ok) {
       throw new Error('Failed to fetch pokemon')
     }
@@ -57,7 +30,7 @@ const { data, refetch, isLoading } = useQuery({
     const pokemonDetails = await Promise.all(
       data.results.map(async (pokemon: PokemonListResult) => {
         const detailResponse = await fetch(pokemon.url)
-        const detail = await detailResponse.json()
+        const detail = await detailResponse.json() as PokemonDetail
         return {
           id: detail.id,
           name: pokemon.name,
@@ -149,14 +122,12 @@ definePageMeta({
           <BaseTable
             v-if="view === VIEW_TYPES.TABLE"
             :rows="items"
-            :columns="columns"
+            :columns="POKEMON_TABLE_COLUMNS"
             :loading="isLoading"
             :pagination-info="paginationInfo"
-            item-name="Pokémon"
-            details-path="/pokemon"
+            v-bind="POKEMON_TABLE_CONFIG"
             show-page-size
-            :page-size-options="[10, 20, 50, 100]"
-            image-class="w-20 h-20 object-contain"
+            :page-size-options="POKEMON_PAGE_SIZE_OPTIONS"
             @page-change="handlePageChange"
             @size-change="handlePageSizeChange"
           />
@@ -165,12 +136,9 @@ definePageMeta({
             :items="items"
             :loading="isLoading"
             :pagination-info="paginationInfo"
-            item-name="Pokémon"
-            details-path="/pokemon"
+            v-bind="POKEMON_GRID_CONFIG"
             show-page-size
-            :page-size-options="[10, 20, 50, 100]"
-            image-class="object-contain"
-            image-container-class="bg-gray-50 dark:bg-gray-900"
+            :page-size-options="POKEMON_PAGE_SIZE_OPTIONS"
             @page-change="handlePageChange"
             @size-change="handlePageSizeChange"
           />

@@ -1,58 +1,22 @@
 <script setup lang="ts">
-import type { CharacterListItem } from '~/types/rick-and-morty'
+import type { CharacterListItem, RickAndMortyApiResponse } from '~/types/rick-and-morty'
 import { useQuery } from '@tanstack/vue-query'
 import BaseGrid from '~/components/BaseGrid.vue'
 import BaseTable from '~/components/BaseTable.vue'
+import {
+  RICK_AND_MORTY_API_URL,
+  RICK_AND_MORTY_GRID_CONFIG,
+  RICK_AND_MORTY_PAGE_SIZE,
+  RICK_AND_MORTY_TABLE_COLUMNS,
+  RICK_AND_MORTY_TABLE_CONFIG,
+} from '~/constants/rick-and-morty'
 import { VIEW_TYPES, type ViewType } from '~/constants/views'
 
 const currentPage = ref(1)
 const view = ref<ViewType>(VIEW_TYPES.TABLE)
-const pageSize = 20 // Rick and Morty API has fixed page size
+const pageSize = RICK_AND_MORTY_PAGE_SIZE
 const activeFilters = ref({})
 const error = ref<string | null>(null)
-
-const columns = [
-  {
-    key: 'id',
-    label: '#',
-    class: 'w-16 hidden sm:table-cell',
-  },
-  {
-    key: 'image',
-    label: '',
-    class: 'w-[80px]',
-  },
-  {
-    key: 'name',
-    label: 'Character',
-    class: 'w-[180px]',
-  },
-  {
-    key: 'status',
-    label: 'Status',
-    class: 'w-[100px] hidden sm:table-cell',
-  },
-  {
-    key: 'species',
-    label: 'Species',
-    class: 'w-[120px] hidden md:table-cell',
-  },
-  {
-    key: 'gender',
-    label: 'Gender',
-    class: 'w-[100px] hidden lg:table-cell',
-  },
-  {
-    key: 'origin',
-    label: 'Origin',
-    class: 'min-w-[160px] hidden md:table-cell',
-  },
-  {
-    key: 'actions',
-    label: 'Actions',
-    class: 'w-[100px] text-center',
-  },
-]
 
 const { data, refetch, isLoading } = useQuery({
   queryKey: ['rick-and-morty-data', currentPage, activeFilters],
@@ -62,7 +26,7 @@ const { data, refetch, isLoading } = useQuery({
       page: currentPage.value.toString(),
       ...activeFilters.value,
     })
-    const response = await fetch(`https://rickandmortyapi.com/api/character?${filterParams.toString()}`)
+    const response = await fetch(`${RICK_AND_MORTY_API_URL}/character?${filterParams.toString()}`)
 
     if (response.status === 404) {
       // API returns 404 when no results are found
@@ -74,14 +38,14 @@ const { data, refetch, isLoading } = useQuery({
           prev: null,
         },
         results: [],
-      }
+      } as RickAndMortyApiResponse
     }
 
     if (!response.ok) {
       throw new Error('Failed to fetch characters')
     }
 
-    return response.json()
+    return response.json() as Promise<RickAndMortyApiResponse>
   },
   retry: (failureCount: number, error: Error) => {
     // Only retry on network errors, not on 404s or other API errors
@@ -193,11 +157,10 @@ definePageMeta({
             <BaseTable
               v-if="view === VIEW_TYPES.TABLE"
               :rows="data?.results || []"
-              :columns="columns"
+              :columns="RICK_AND_MORTY_TABLE_COLUMNS"
               :loading="isLoading"
               :pagination-info="paginationInfo"
-              item-name="Characters"
-              details-path="/rick-and-morty"
+              v-bind="RICK_AND_MORTY_TABLE_CONFIG"
               @page-change="handlePageChange"
             />
             <BaseGrid
@@ -205,11 +168,7 @@ definePageMeta({
               :items="data?.results || []"
               :loading="isLoading"
               :pagination-info="paginationInfo"
-              item-name="Characters"
-              details-path="/rick-and-morty"
-              show-status
-              show-origin
-              image-class="object-cover"
+              v-bind="RICK_AND_MORTY_GRID_CONFIG"
               @page-change="handlePageChange"
             />
           </Transition>
