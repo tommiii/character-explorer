@@ -95,6 +95,10 @@ const columns = [
             >
           </template>
 
+          <template #origin-data="{ row }">
+            {{ row.origin.name }}
+          </template>
+
           <template #actions-data="{ row }">
             <NuxtLink :to="`/rick-and-morty/${row.id}`">
               <UButton

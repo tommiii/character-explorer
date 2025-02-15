@@ -6,6 +6,7 @@ import { VIEW_TYPES, type ViewType } from '~/constants/views'
 
 const currentPage = ref(1)
 const view = ref<ViewType>(VIEW_TYPES.TABLE)
+const pageSize = 20 // Rick and Morty API has fixed page size
 
 const { data, refetch } = useQuery({
   queryKey: ['rick-and-morty-data', currentPage],
@@ -16,6 +17,19 @@ function handlePageChange(page: number) {
   currentPage.value = page
   refetch()
 }
+
+const paginationInfo = computed(() => {
+  const firstItemNumber = ((currentPage.value - 1) * pageSize) + 1
+  const lastItemNumber = Math.min(currentPage.value * pageSize, data.value?.info?.count || 0)
+
+  return {
+    currentPage: currentPage.value,
+    totalCount: data.value?.info?.count || 0,
+    pageSize,
+    firstItemNumber,
+    lastItemNumber,
+  }
+})
 
 watch([currentPage], () => {
   refreshNuxtData()
@@ -62,22 +76,14 @@ definePageMeta({
             v-if="view === VIEW_TYPES.TABLE"
             :characters="data?.results || []"
             :loading="!data"
-            :pagination-info="{
-              currentPage,
-              totalCount: data?.info?.count || 0,
-              pages: data?.info?.pages || 0,
-            }"
+            :pagination-info="paginationInfo"
             @page-change="handlePageChange"
           />
           <RickAndMortyGrid
             v-else
             :characters="data?.results || []"
             :loading="!data"
-            :pagination-info="{
-              currentPage,
-              totalCount: data?.info?.count || 0,
-              pages: data?.info?.pages || 0,
-            }"
+            :pagination-info="paginationInfo"
             @page-change="handlePageChange"
           />
         </Transition>

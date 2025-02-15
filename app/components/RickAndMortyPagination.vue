@@ -13,15 +13,15 @@ const emit = defineEmits<{
 <template>
   <div class="mt-4 space-y-2">
     <div class="text-sm text-gray-600 dark:text-gray-400 text-center">
-      Showing {{ ((paginationInfo?.currentPage || 1 - 1) * 20) + 1 }} -
-      {{ Math.min((paginationInfo?.currentPage || 1) * 20, paginationInfo?.totalCount || 0) }}
-      of {{ paginationInfo?.totalCount || 0 }} Characters
+      Showing {{ paginationInfo.firstItemNumber }} -
+      {{ paginationInfo.lastItemNumber }}
+      of {{ paginationInfo.totalCount }} Characters
     </div>
     <div class="flex justify-center items-center gap-4">
       <UPagination
-        :model-value="paginationInfo?.currentPage"
-        :total="paginationInfo?.totalCount"
-        :page-count="20"
+        :model-value="paginationInfo.currentPage"
+        :total="paginationInfo.totalCount"
+        :page-count="paginationInfo.pageSize"
         :ui="{ rounded: 'rounded-lg' }"
         @update:model-value="(page) => emit('pageChange', page)"
       />

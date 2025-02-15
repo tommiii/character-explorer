@@ -37,10 +37,15 @@ function handlePageSizeChange(size: number) {
 }
 
 const paginationInfo = computed(() => {
+  const firstItem = pokemonWithImages.value[0]?.id
+  const lastItem = pokemonWithImages.value[pokemonWithImages.value.length - 1]?.id
+
   return {
     currentPage: currentPage.value,
     totalCount: data?.value?.count || 0,
     pageSize: pageSize.value,
+    firstItemNumber: firstItem ? Number.parseInt(firstItem) : ((currentPage.value - 1) * pageSize.value) + 1,
+    lastItemNumber: lastItem ? Number.parseInt(lastItem) : Math.min(currentPage.value * pageSize.value, data?.value?.count || 0),
   }
 })
 
@@ -89,11 +94,7 @@ definePageMeta({
             v-if="view === VIEW_TYPES.TABLE"
             :pokemon="pokemonWithImages"
             :loading="!data"
-            :pagination-info="{
-              currentPage,
-              totalCount: data?.count || 0,
-              pageSize,
-            }"
+            :pagination-info="paginationInfo"
             @page-change="handlePageChange"
             @size-change="handlePageSizeChange"
           />

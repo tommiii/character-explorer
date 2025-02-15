@@ -14,9 +14,9 @@ const emit = defineEmits<{
 <template>
   <div class="mt-4 space-y-2">
     <div class="text-sm text-gray-600 dark:text-gray-400 text-center">
-      Showing {{ ((paginationInfo?.currentPage || 1 - 1) * (paginationInfo?.pageSize || 20)) + 1 }} -
-      {{ Math.min((paginationInfo?.currentPage || 1) * (paginationInfo?.pageSize || 20), paginationInfo?.totalCount || 0) }}
-      of {{ paginationInfo?.totalCount || 0 }} Pokémon
+      Showing {{ paginationInfo.firstItemNumber }} -
+      {{ paginationInfo.lastItemNumber }}
+      of {{ paginationInfo.totalCount }} Pokémon
     </div>
     <div class="flex justify-center items-center gap-4">
       <USelect
@@ -27,9 +27,9 @@ const emit = defineEmits<{
         @update:model-value="(size: number) => emit('sizeChange', size)"
       />
       <UPagination
-        :model-value="paginationInfo?.currentPage"
-        :total="paginationInfo?.totalCount"
-        :page-count="paginationInfo?.pageSize"
+        :model-value="paginationInfo.currentPage"
+        :total="paginationInfo.totalCount"
+        :page-count="paginationInfo.pageSize"
         :ui="{ rounded: 'rounded-lg' }"
         @update:model-value="(page) => emit('pageChange', page)"
       />
