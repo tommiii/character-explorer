@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import type { PokemonListItem } from '~/types/pokemon'
 
+const { items, loading } = defineProps<{
+  items: PokemonListItem[]
+  loading?: boolean
+}>()
+
 const POKEMON_TABLE_COLUMNS = [
   {
     key: 'id',
@@ -23,12 +28,6 @@ const POKEMON_TABLE_COLUMNS = [
     class: 'w-[100px] text-center',
   },
 ]
-
-const { items, loading } = defineProps<{
-  items: PokemonListItem[]
-  loading?: boolean
-}>()
-
 
 const rows = computed(() => {
   return items?.map(item => ({

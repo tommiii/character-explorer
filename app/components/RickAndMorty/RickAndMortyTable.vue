@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import type { CharacterListItem } from '~/types/rick-and-morty'
 
+const { characters, loading } = defineProps<{
+  characters: CharacterListItem[]
+  loading?: boolean
+}>()
+
 const RICK_AND_MORTY_TABLE_COLUMNS = [
   {
     key: 'id',
@@ -43,11 +48,6 @@ const RICK_AND_MORTY_TABLE_COLUMNS = [
     class: 'w-[100px] text-center',
   },
 ]
-
-const { characters, loading } = defineProps<{
-  characters: CharacterListItem[]
-  loading?: boolean
-}>()
 
 const isMobile = ref(false)
 

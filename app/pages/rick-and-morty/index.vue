@@ -166,7 +166,6 @@ definePageMeta({
             :pagination-info="paginationInfo"
             @page-change="handlePageChange"
           />
-
         </div>
       </div>
     </UContainer>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Character, Episode } from '~/types/rick-and-morty'
+import type { Character } from '~/types/rick-and-morty'
 import { useNuxtApp } from '#app'
 import { useQuery } from '@tanstack/vue-query'
 
@@ -9,7 +9,6 @@ const id = computed(() => {
   const paramId = (route.params as { id: string | string[] }).id
   return typeof paramId === 'string' ? paramId : Array.isArray(paramId) ? paramId[0] : ''
 })
-
 
 const { data: character, isLoading: pending } = useQuery<Character>({
   queryKey: ['character-details', id],

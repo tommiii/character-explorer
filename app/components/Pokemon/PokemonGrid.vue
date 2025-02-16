@@ -2,12 +2,10 @@
 import type { PokemonListItem } from '~/types/pokemon'
 import { useRouter } from 'vue-router'
 
-
 const { items, loading } = defineProps<{
   items: PokemonListItem[]
   loading?: boolean
 }>()
-
 
 const router = useRouter()
 async function handleDetails(pokemon: PokemonListItem) {

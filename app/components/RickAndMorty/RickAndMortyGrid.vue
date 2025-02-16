@@ -7,7 +7,6 @@ const { characters, loading } = defineProps<{
   loading?: boolean
 }>()
 
-
 const router = useRouter()
 async function handleDetails(character: CharacterListItem) {
   await router.push(`/rick-and-morty/${character.id}`)

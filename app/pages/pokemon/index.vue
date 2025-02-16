@@ -117,7 +117,6 @@ definePageMeta({
           leave-from-class="opacity-100 scale-100"
           leave-to-class="opacity-0 scale-95"
         >
-        
           <PokemonTable
             v-if="view === VIEW_TYPES.TABLE"
             :items="items"
@@ -136,13 +135,13 @@ definePageMeta({
           />
         </Transition>
         <BasePagination
-            :pagination-info="paginationInfo"
-            item-name="Pokémon"
-            show-page-size
-            :page-size-options="POKEMON_PAGE_SIZE_OPTIONS"
-            @page-change="handlePageChange"
-            @size-change="handlePageSizeChange"
-          />
+          :pagination-info="paginationInfo"
+          item-name="Pokémon"
+          show-page-size
+          :page-size-options="POKEMON_PAGE_SIZE_OPTIONS"
+          @page-change="handlePageChange"
+          @size-change="handlePageSizeChange"
+        />
       </div>
     </UContainer>
   </div>
