@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PokemonListItem } from '~/types/pokemon'
+import { computed } from 'vue'
 
 const { items, loading } = defineProps<{
   items: PokemonListItem[]
