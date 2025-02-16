@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CharacterListItem } from '~/types/rick-and-morty'
+import { onMounted, onUnmounted, ref } from 'vue'
 
 const { characters, loading } = defineProps<{
   characters: CharacterListItem[]
