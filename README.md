@@ -39,7 +39,7 @@ A Vue.js application showcasing data visualization from the Pokémon API and Ric
 
 ```bash
 git clone <repository-url>
-cd visma-assignment
+cd character-explorer
 ```
 
 2. Install dependencies:
