@@ -17,6 +17,12 @@ export default defineNuxtConfig({
     },
   },
 
+  vue: {
+    compilerOptions: {
+      isCustomElement: tag => ['UColorMode'].includes(tag),
+    },
+  },
+
   experimental: {
     payloadExtraction: false,
     renderJsonPayloads: true,
