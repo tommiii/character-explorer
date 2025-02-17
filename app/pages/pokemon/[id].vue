@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { Pokemon, PokemonSpecies } from '~/types/pokemon'
+import { useNuxtApp } from '#app'
 import { useQuery } from '@tanstack/vue-query'
 
+const { $apiUrls } = useNuxtApp()
 const route = useRoute()
 const id = computed(() => {
   const paramId = (route.params as { id: string | string[] }).id
@@ -10,12 +12,12 @@ const id = computed(() => {
 
 const { data: pokemon, isLoading: pending, error: pokemonError } = useQuery<Pokemon>({
   queryKey: ['pokemon-details', id],
-  queryFn: () => fetch(`https://pokeapi.co/api/v2/pokemon/${id.value}`).then(res => res.json()),
+  queryFn: () => fetch(`${$apiUrls.pokemon}/pokemon/${id.value}`).then(res => res.json()),
 })
 
 const { data: species, error: speciesError } = useQuery<PokemonSpecies>({
   queryKey: ['pokemon-species', id],
-  queryFn: () => fetch(`https://pokeapi.co/api/v2/pokemon-species/${id.value}`).then(res => res.json()),
+  queryFn: () => fetch(`${$apiUrls.pokemon}/pokemon-species/${id.value}`).then(res => res.json()),
   enabled: !!pokemon.value,
 })
 
