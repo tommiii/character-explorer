@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import type { ViewType } from '~/constants/views'
 import type { PokemonApiResponse, PokemonDetail, PokemonListItem, PokemonListResult } from '~/types/pokemon'
 import { useNuxtApp } from '#app'
 import { useQuery } from '@tanstack/vue-query'
 import PokemonGrid from '~/components/Pokemon/PokemonGrid.vue'
 import PokemonTable from '~/components/Pokemon/PokemonTable.vue'
-import { VIEW_TYPES, type ViewType } from '~/constants/views'
+import { VIEW_TYPES } from '~/constants/views'
 
 const { $apiUrls } = useNuxtApp()
 

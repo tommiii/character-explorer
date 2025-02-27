@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import type { ViewType } from '~/constants/views'
 import type { RickAndMortyApiResponse } from '~/types/rick-and-morty'
 import { useNuxtApp } from '#app'
 import { useQuery } from '@tanstack/vue-query'
 import RickAndMortyFilters from '~/components/RickAndMorty/RickAndMortyFilters.vue'
 import RickAndMortyGrid from '~/components/RickAndMorty/RickAndMortyGrid.vue'
 import RickAndMortyTable from '~/components/RickAndMorty/RickAndMortyTable.vue'
-import { VIEW_TYPES, type ViewType } from '~/constants/views'
+import { VIEW_TYPES } from '~/constants/views'
 
 const { $apiUrls } = useNuxtApp()
 

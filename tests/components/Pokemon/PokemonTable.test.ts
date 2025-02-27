@@ -1,7 +1,6 @@
 import PokemonTable from '@/components/Pokemon/PokemonTable.vue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { computed } from 'vue'
 
 // Mock Nuxt components
 const mockNuxtLink = {
@@ -94,7 +93,7 @@ describe('pokemonTable', () => {
     expect(images).toHaveLength(2)
     const firstImage = images[0]!
     const firstImageAttrs = firstImage.attributes()!
-    expect(firstImageAttrs.src).toBe(mockItems[0].image)
+    expect(firstImageAttrs.src).toBe(mockItems[0]?.image)
     expect(firstImageAttrs.alt).toBe('Bulbasaur') // Name should be capitalized
 
     // Check if names are rendered and capitalized

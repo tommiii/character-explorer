@@ -78,8 +78,8 @@ describe('pokemonGrid', () => {
     const firstCard = cards[0]!
     const img = firstCard.find('img')!
     const imgAttrs = img.attributes()!
-    expect(imgAttrs.src!).toBe(mockItems[0].image)
-    expect(imgAttrs.alt!).toBe(mockItems[0].name)
+    expect(imgAttrs.src!).toBe(mockItems[0]?.image)
+    expect(imgAttrs.alt!).toBe(mockItems[0]?.name)
     expect(firstCard.text()).toContain('bulbasaur')
     expect(firstCard.text()).toContain('#001')
   })
